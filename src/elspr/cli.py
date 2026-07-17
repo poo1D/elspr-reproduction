@@ -19,6 +19,7 @@ from elspr.graph import (
     reconstruct_sccs,
     structural_entropy,
     write_graph,
+    write_graph_svg,
 )
 from elspr.io import read_jsonl, write_jsonl
 from elspr.judging import aggregate_pair_judgments
@@ -84,10 +85,17 @@ def build_graphs(
             question_graph.graph,
             question_id=question_id,
         )
+        svg_filename = f"{Path(filename).stem}.svg"
+        write_graph_svg(
+            output_dir / svg_filename,
+            question_graph.graph,
+            title=f"ELSPR graph: {question_id}",
+        )
         manifest.append(
             {
                 "question_id": question_id,
                 "file": filename,
+                "visualization": svg_filename,
                 "nodes": question_graph.graph.number_of_nodes(),
                 "edges": question_graph.graph.number_of_edges(),
             }
@@ -122,6 +130,8 @@ def analyze(
                 "nodes": scc.total_nodes,
                 "scc_count": len(scc.components),
                 "max_scc_size": scc.max_scc_size,
+                "components": scc.components,
+                "non_transitive_components": scc.non_transitive_components,
                 "non_transitive_nodes": scc.non_transitive_nodes,
                 "rho_non_trans": scc.rho_non_trans,
                 "h2": entropy.h2,
@@ -160,11 +170,32 @@ def filter_command(
     cleaned: list[JudgmentRecord] = []
     discarded: list[JudgmentRecord] = []
     decisions: list[dict[str, object]] = []
+    reconstructed_manifest: list[dict[str, str]] = []
+    reconstructed_dir = output_dir / "reconstructed_graphs"
     for path in _graph_files(graphs):
         if path.name == "manifest.json":
             continue
         question_id, graph = read_graph(path)
         reconstruction = reconstruct_sccs(graph)
+        reconstructed_name = path.name
+        reconstructed_svg_name = f"{path.stem}.svg"
+        write_graph(
+            reconstructed_dir / reconstructed_name,
+            reconstruction.graph,
+            question_id=question_id,
+        )
+        write_graph_svg(
+            reconstructed_dir / reconstructed_svg_name,
+            reconstruction.graph,
+            title=f"ELSPR reconstructed graph: {question_id}",
+        )
+        reconstructed_manifest.append(
+            {
+                "question_id": question_id,
+                "file": reconstructed_name,
+                "visualization": reconstructed_svg_name,
+            }
+        )
         result = filter_question_judgments(
             reconstruction.graph,
             by_question.pop(question_id, []),
@@ -191,6 +222,10 @@ def filter_command(
     write_jsonl(output_dir / "cleaned.jsonl", cleaned)
     write_jsonl(output_dir / "discarded.jsonl", discarded)
     _write_json(output_dir / "decisions.json", decisions)
+    _write_json(
+        reconstructed_dir / "manifest.json",
+        {"graphs": reconstructed_manifest},
+    )
     typer.echo(f"cleaned={len(cleaned)} discarded={len(discarded)}")
 
 
@@ -207,10 +242,20 @@ def _toy_summary(case: str, output_dir: Path) -> dict[str, object]:
         result.question_graph.graph,
         question_id=result.question_graph.question_id,
     )
+    write_graph_svg(
+        case_dir / "graph.svg",
+        result.question_graph.graph,
+        title=f"ELSPR graph: {result.question_graph.question_id}",
+    )
     write_graph(
         case_dir / "reconstructed_graph.json",
         result.reconstruction.graph,
         question_id=result.question_graph.question_id,
+    )
+    write_graph_svg(
+        case_dir / "reconstructed_graph.svg",
+        result.reconstruction.graph,
+        title=f"ELSPR reconstructed graph: {result.question_graph.question_id}",
     )
     analysis = {
         "question_id": result.question_graph.question_id,

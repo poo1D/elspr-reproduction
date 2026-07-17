@@ -23,8 +23,10 @@ def test_one_command_toy_pipeline_writes_all_artifacts(tmp_path: Path) -> None:
         assert (case_dir / "judgments.jsonl").exists()
         assert (case_dir / "pair_relations.jsonl").exists()
         assert (case_dir / "graph.json").exists()
+        assert (case_dir / "graph.svg").exists()
         assert (case_dir / "analysis.json").exists()
         assert (case_dir / "reconstructed_graph.json").exists()
+        assert (case_dir / "reconstructed_graph.svg").exists()
         assert (case_dir / "cleaned.jsonl").exists()
         assert (case_dir / "discarded.jsonl").exists()
 
@@ -92,6 +94,25 @@ def test_build_analyze_and_filter_commands_compose(tmp_path: Path) -> None:
     metrics = json.loads(analysis_path.read_text(encoding="utf-8"))
     assert metrics["rho_non_trans"] == 0.0
     assert metrics["tau_avg"] == 0.0
+    assert metrics["questions"][0]["components"] == [["a"], ["b"], ["c"]]
+    assert metrics["questions"][0]["non_transitive_components"] == []
+    graph_manifest = json.loads(
+        (graphs_dir / "manifest.json").read_text(encoding="utf-8")
+    )
+    graph_entry = graph_manifest["graphs"][0]
+    assert (graphs_dir / graph_entry["visualization"]).exists()
+    reconstructed_manifest = json.loads(
+        (filtered_dir / "reconstructed_graphs" / "manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    reconstructed_entry = reconstructed_manifest["graphs"][0]
+    assert (
+        filtered_dir / "reconstructed_graphs" / reconstructed_entry["file"]
+    ).exists()
+    assert (
+        filtered_dir / "reconstructed_graphs" / reconstructed_entry["visualization"]
+    ).exists()
     assert len((filtered_dir / "cleaned.jsonl").read_text().splitlines()) == 6
     assert (filtered_dir / "discarded.jsonl").read_text() == ""
 

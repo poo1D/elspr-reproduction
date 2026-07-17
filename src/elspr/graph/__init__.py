@@ -30,6 +30,7 @@ from elspr.graph.serialization import (
     record_to_graph,
     write_graph,
 )
+from elspr.graph.visualization import graph_to_svg, write_graph_svg
 
 __all__ = [
     "IncompleteQuestionError",
@@ -44,6 +45,7 @@ __all__ = [
     "build_question_graph",
     "dataset_non_transitivity",
     "graph_to_record",
+    "graph_to_svg",
     "is_non_transitive_component",
     "read_graph",
     "reconstruct_sccs",
@@ -52,4 +54,5 @@ __all__ = [
     "tarjan_scc",
     "tie_quotient_graph",
     "write_graph",
+    "write_graph_svg",
 ]
