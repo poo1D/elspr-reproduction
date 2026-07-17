@@ -8,9 +8,9 @@
 | 3. SCC analysis | done | `repro/level-1` | `f887495acd72f55274e23818021d0185f1ad8405` | 29 passed | Deterministic Tarjan SCC and vertex-weighted non-transitivity | All-pairs tie SCCs are excluded |
 | 4. Structural entropy | done | `repro/level-1` | `df5e56a55316386db3c5dbffa5faf3117a88d369` | 39 passed | Directed H2, tau, and unweighted tau_avg | Zero-volume cases return zero; out-of-range values warn |
 | 5. SCC reconstruction | done | `repro/level-1` | `c05cb6d93bef95718a5ba07cb7bd1fc2cbdc89b8` | 45 passed | Original-in-degree SCC reconstruction and quotient DAG | Equal scores remain bidirectional tie classes |
-| 6. Data filtering | done | `repro/level-1` | pending post-push record | 54 passed | Conservative cleaned/discarded split with decisions | Invalid and binary-to-tie judgments are discarded |
-| 7. Toy test suite | in_progress | `repro/level-1` | - | not run | Consolidating five required cases and end-to-end invariants | - |
-| 8. CLI and toy pipeline | not_started | `repro/level-1` | - | - | - | - |
+| 6. Data filtering | done | `repro/level-1` | `f3b84b691bd47eb5aa90baef8d93ab3f7bef85e1` | 54 passed | Conservative cleaned/discarded split with decisions | Invalid and binary-to-tie judgments are discarded |
+| 7. Toy test suite | done | `repro/level-1` | pending post-push record | 63 passed | Five required cross-module cases and JSONL round trip | Binary toy judge represents ties as order instability |
+| 8. CLI and toy pipeline | in_progress | `repro/level-1` | - | not run | Exposing end-to-end artifact-producing CLI | - |
 | 9. Level 1 report | not_started | `repro/level-1` | - | - | - | - |
 
 ## Stage 0 - Bootstrap
@@ -79,8 +79,18 @@
 
 - Status: `done`
 - Completed: 2026-07-18
-- Commit: pending post-push record
+- Commit: `f3b84b691bd47eb5aa90baef8d93ab3f7bef85e1`
 - Tests: `PYTHONPATH=src /tmp/elspr-reproduction-venv/bin/pytest tests/test_filtering.py tests/test_reconstruction.py tests/test_entropy.py tests/test_scc_metrics.py tests/test_graph_build.py tests/test_pair_aggregation.py tests/test_package.py`
 - Result: 54 tests pass; ordered win/lose targets, explicit ties, binary-to-tie discard, invalid input, question isolation, missing relations, and count conservation are covered
 - Paper assumptions/deviations: original records are never relabeled; every input appears exactly once in cleaned or discarded with an auditable decision
 - Next: consolidate the five required toy cases and assert cross-module end-to-end invariants
+
+## Stage 7 - Toy test suite
+
+- Status: `done`
+- Completed: 2026-07-18
+- Commit: pending post-push record
+- Tests: `PYTHONPATH=src /tmp/elspr-reproduction-venv/bin/pytest tests/test_end_to_end_toy.py tests/test_filtering.py tests/test_reconstruction.py tests/test_entropy.py tests/test_scc_metrics.py tests/test_graph_build.py tests/test_pair_aggregation.py tests/test_package.py`
+- Result: 63 tests pass; Cases A-E traverse aggregation, graph construction, SCC, entropy, reconstruction, and filtering, with typed JSONL round-trip and line-level validation errors
+- Paper assumptions/deviations: the binary toy judge encodes tie/position instability as same-side wins across swapped orders, matching the paper's graph rule
+- Next: expose artifact-producing CLI commands and a one-command all-case toy pipeline
