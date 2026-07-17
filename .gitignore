@@ -19,6 +19,8 @@ cache/
 artifacts/raw/
 artifacts/cache/
 artifacts/graphs/
+artifacts/toy/
+artifacts/filtered/
 runs/
 reports/generated/
 wandb/

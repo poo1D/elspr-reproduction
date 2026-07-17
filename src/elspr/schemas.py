@@ -89,3 +89,20 @@ class PairRelation(StrictModel):
         if Outcome.INVALID in (self.j_ab, self.j_ba):
             raise ValueError("invalid judgments cannot form a pair relation")
         return self
+
+
+class GraphEdge(StrictModel):
+    """One serializable directed edge."""
+
+    source: str
+    target: str
+    relation: str = "preference"
+    reconstructed: bool = False
+
+
+class GraphRecord(StrictModel):
+    """Stable JSON representation of one question graph."""
+
+    question_id: str = Field(min_length=1)
+    nodes: list[str]
+    edges: list[GraphEdge]

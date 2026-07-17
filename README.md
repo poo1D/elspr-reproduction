@@ -35,9 +35,32 @@ status in [`PROGRESS.md`](PROGRESS.md), and paper ambiguities in
 
 ## CLI
 
-The `elspr` command is installed by the package. Stage 8 will expose the full
-toy pipeline and the data, graph, filtering, training, evaluation, and report
-commands defined by the project specification.
+Run all five deterministic cases and generate a Markdown report:
+
+```bash
+uv run elspr toy-pipeline --output-dir artifacts/toy
+uv run elspr report --run-dir artifacts/toy
+```
+
+Run the Level 1 stages on validated judgment JSONL:
+
+```bash
+uv run elspr build-graphs \
+  --judgments artifacts/judgments.jsonl \
+  --output-dir artifacts/graphs
+uv run elspr analyze \
+  --graphs artifacts/graphs \
+  --output artifacts/analysis.json
+uv run elspr filter \
+  --graphs artifacts/graphs \
+  --judgments artifacts/judgments.jsonl \
+  --output-dir artifacts/filtered
+```
+
+`build-graphs` rejects incomplete dual-order pairs. `filter` reconstructs every
+graph before writing `cleaned.jsonl`, `discarded.jsonl`, and auditable decisions.
+Judge API, training, and empirical evaluation commands belong to Level 2 and
+are not represented as completed functionality in Level 1.
 
 ## License
 

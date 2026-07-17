@@ -24,6 +24,12 @@ from elspr.graph.scc import (
     is_non_transitive_component,
     tarjan_scc,
 )
+from elspr.graph.serialization import (
+    graph_to_record,
+    read_graph,
+    record_to_graph,
+    write_graph,
+)
 
 __all__ = [
     "IncompleteQuestionError",
@@ -37,9 +43,13 @@ __all__ = [
     "average_structural_entropy",
     "build_question_graph",
     "dataset_non_transitivity",
+    "graph_to_record",
     "is_non_transitive_component",
+    "read_graph",
     "reconstruct_sccs",
+    "record_to_graph",
     "structural_entropy",
     "tarjan_scc",
     "tie_quotient_graph",
+    "write_graph",
 ]
