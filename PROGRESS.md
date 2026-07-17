@@ -11,7 +11,7 @@
 | 6. Data filtering | done | `repro/level-1` | `f3b84b691bd47eb5aa90baef8d93ab3f7bef85e1` | 54 passed | Conservative cleaned/discarded split with decisions | Invalid and binary-to-tie judgments are discarded |
 | 7. Toy test suite | done | `repro/level-1` | `71816ec1b30887c34d990698905942be1c3579ff` | 63 passed | Five required cross-module cases and JSONL round trip | Binary toy judge represents ties as order instability |
 | 8. CLI and toy pipeline | done | `repro/level-1` | `dc2dede9ebe6c64891c1f248a3cfd11da7886b4a` | 67 passed | Artifact-producing graph, analysis, filter, toy, and report commands | Level 2 commands are not stubbed as complete |
-| 9. Level 1 report | in_progress | `repro/level-1` | - | not run | Running full validation and preparing final report | - |
+| 9. Level 1 report | done | `repro/level-1` | `2f09af2ddd79527a6496015f2571f26f8757e6b4` | 67 passed + CI | Public Level 1 report and reproducibility evidence | Exact empirical reproduction remains Level 2/3 |
 
 ## Stage 0 - Bootstrap
 
@@ -107,10 +107,11 @@
 
 ## Stage 9 - Level 1 report
 
-- Status: `in_progress`
-- Completed: pending final CI
-- Commit: pending post-push record
+- Status: `done`
+- Completed: 2026-07-18
+- Commit: `2f09af2ddd79527a6496015f2571f26f8757e6b4`
 - Tests: clean frozen environment completed with 67 passed; Ruff lint and format checks passed; five-case CLI pipeline and report smoke test passed
-- Result: `reports/LEVEL_1_REPORT.md` records method coverage, exact toy metrics, commands, assumptions, and Level 2/3 scope boundaries
+- CI: push run `29597259790` and pull-request run `29597263202` passed
+- Result: `reports/LEVEL_1_REPORT.md` records method coverage, exact toy metrics, commands, assumptions, and Level 2/3 scope boundaries; all Level 1 completion criteria are satisfied
 - Paper assumptions/deviations: exact empirical reproduction remains outside Level 1 and is not claimed
-- Next: push this report commit, verify both GitHub Actions triggers, then record Stage 9 as done
+- Next: mark Draft PR ready for review and begin Level 2 resource/data readiness checks without merging
