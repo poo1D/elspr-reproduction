@@ -1,15 +1,46 @@
-You are evaluating two candidate responses to the same instruction.
+I require a leaderboard for various large language models. I'll provide you
+with prompts given to these models and their corresponding outputs. Your task
+is to assess these responses and select the model that produces the best output
+from a human perspective.
 
-Instruction:
-{instruction}
+## Instruction
 
-Response A:
-{left_response}
+{{
+    "instruction": """{instruction}""",
+}}
 
-Response B:
-{right_response}
+## Model Outputs
 
-Reason carefully, then output exactly one final label: A or B.
+Here are the unordered outputs from the models. Each output is associated with
+a specific model, identified by a unique model identifier.
 
-This is a documented placeholder because the paper's exact prompt template is
-only referenced in unavailable supplementary material.
+{{
+    {{
+        "model_identifier": "m",
+        "output": """{left_response}"""
+    }},
+    {{
+        "model_identifier": "M",
+        "output": """{right_response}"""
+    }}
+}}
+
+## Task
+
+Evaluate the models based on the quality and relevance of their outputs, and
+select the model that generated the best output. Answer by first providing a
+concise explanation and then end your answer by providing the model identifier
+of the best output. We will use the last character of your output `output[-1]`
+as the name of the best model, so make sure you finish with the token of the
+model identifiers and nothing else: `m` or `M` (no quotes, no dots, no
+backticks, no new lines, ...). For example:
+
+### Concise explanation
+...some text...
+
+### Which is best, m or M?
+M
+
+Now is your turn.
+
+## Your answer: "Concise explanation" followed by "Which is best, m or M?"

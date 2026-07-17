@@ -114,8 +114,13 @@ Further details and the source PDF checksum are recorded in
 ## Scope boundary
 
 This report establishes algorithm-level reproduction only. Level 2 still
-requires a versioned AlpacaEval subset, response generation or imported
-responses, judge API execution, and at least one raw/cleaned/random LoRA
-experiment. Level 3 remains blocked because the supplied 10-page PDF references
-unavailable appendices and supplementary assets containing model lists, prompt
-templates, data splits, and code.
+requires a versioned AlpacaEval subset, judge execution or imported judgments,
+and at least one raw/cleaned/random LoRA experiment.
+
+After the original Level 1 implementation, the current AAAI-26 article, arXiv
+v3 appendices, and author code/response repository were located. This removes
+the prompt and public-code gaps, but Level 3 remains partially blocked because
+the upstream repository does not publish the paper's judgment outputs,
+raw/cleaned/random training artifacts, exact 14/7 model partition, training
+implementation/configuration, checkpoints, or full evaluation provenance.
+See [`UPSTREAM_AUDIT.md`](../UPSTREAM_AUDIT.md).

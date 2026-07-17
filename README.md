@@ -62,6 +62,8 @@ flag, use the audited workaround documented in `REPRODUCIBILITY.md`.
 The complete target behavior is specified in [`GOAL.md`](GOAL.md), current
 status in [`PROGRESS.md`](PROGRESS.md), and paper ambiguities in
 [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md).
+The pinned audit of the later AAAI/arXiv release and author repository is in
+[`UPSTREAM_AUDIT.md`](UPSTREAM_AUDIT.md).
 
 ## CLI
 

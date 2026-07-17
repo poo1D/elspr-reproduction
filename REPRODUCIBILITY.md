@@ -2,7 +2,7 @@
 
 ## Source artifact
 
-The local source reviewed for this reproduction is:
+The original local source reviewed for Level 1 is:
 
 - Title: *ELSPR: Evaluator LLM Training Data Self-Purification on
   Non-Transitive Preferences via Tournament Graph Reconstruction*
@@ -13,6 +13,11 @@ The local source reviewed for this reproduction is:
 
 The PDF is not committed because the repository does not establish a
 redistribution license for it.
+
+On 2026-07-18, the current AAAI-26 article, 15-page arXiv v3, and author
+repository became available during the reproduction audit. The current source
+inventory, pinned hashes, available assets, missing artifacts, and paper-code
+discrepancies are recorded in [`UPSTREAM_AUDIT.md`](UPSTREAM_AUDIT.md).
 
 ## Confirmed method details
 
@@ -34,11 +39,14 @@ redistribution license for it.
    classes and requires the quotient graph to be acyclic.
 3. Section 3.2 describes `g_j` in prose. The implementation excludes only
    edges whose source and target SCCs are both singletons, matching that prose.
-4. The provided 10-page PDF references Appendix C, Appendix D, Appendix G, and
-   supplementary code/data that are not included. Exact model lists, prompt
-   text, splits, and some evaluation details remain unavailable.
-5. Until the supplementary assets are recovered, Level 3 is blocked and Level
-   2 uses explicit, versioned substitute configurations.
+4. The original 10-page PDF lacked its referenced appendices. arXiv v3 now
+   supplies filtering pseudocode, additional results, and exact prompt text.
+5. The author repository now supplies code and model-response data, but not
+   paper judgment outputs, training datasets, the exact 14/7 model partition,
+   training code/configuration, checkpoints, or complete evaluation scripts.
+6. Level 3 remains partially blocked by the missing run artifacts and training
+   provenance listed in `UPSTREAM_AUDIT.md`; Level 2 can now use the pinned
+   public response data and exact prompt instead of placeholders.
 
 ## Local environment note
 

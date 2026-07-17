@@ -115,3 +115,11 @@
 - Result: `reports/LEVEL_1_REPORT.md` records method coverage, exact toy metrics, commands, assumptions, and Level 2/3 scope boundaries; all Level 1 completion criteria are satisfied
 - Paper assumptions/deviations: exact empirical reproduction remains outside Level 1 and is not claimed
 - Next: mark Draft PR ready for review and begin Level 2 resource/data readiness checks without merging
+
+### Post-completion upstream audit
+
+- Audited: 2026-07-18
+- Current sources: AAAI-26 article, arXiv v3, and author repository commit `e9886b3a96f71cee654e1c758d03a026f3cbc32f`
+- Result: exact standard CoT prompt and public response/code assets are now available and pinned in `UPSTREAM_AUDIT.md`
+- Remaining Level 3 gaps: paper judgment outputs, training datasets, exact 14/7 model split, training implementation/configuration, checkpoints, and complete evaluation provenance
+- Compatibility note: the published author code contains edge-direction, degree, logarithm-base, SCC-size, and external-edge-preservation differences from the paper definitions
