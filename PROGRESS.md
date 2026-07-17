@@ -7,9 +7,9 @@
 | 2. Graph construction | done | `repro/level-1` | `a1f8c03305b041e283f1f2c83543a42159e46df2` | 20 passed | Complete tie-aware tournament graph builder | Incomplete questions are rejected |
 | 3. SCC analysis | done | `repro/level-1` | `f887495acd72f55274e23818021d0185f1ad8405` | 29 passed | Deterministic Tarjan SCC and vertex-weighted non-transitivity | All-pairs tie SCCs are excluded |
 | 4. Structural entropy | done | `repro/level-1` | `df5e56a55316386db3c5dbffa5faf3117a88d369` | 39 passed | Directed H2, tau, and unweighted tau_avg | Zero-volume cases return zero; out-of-range values warn |
-| 5. SCC reconstruction | done | `repro/level-1` | pending post-push record | 45 passed | Original-in-degree SCC reconstruction and quotient DAG | Equal scores remain bidirectional tie classes |
-| 6. Data filtering | in_progress | `repro/level-1` | - | not run | Splitting judgments into cleaned and discarded | - |
-| 7. Toy test suite | not_started | `repro/level-1` | - | - | - | - |
+| 5. SCC reconstruction | done | `repro/level-1` | `c05cb6d93bef95718a5ba07cb7bd1fc2cbdc89b8` | 45 passed | Original-in-degree SCC reconstruction and quotient DAG | Equal scores remain bidirectional tie classes |
+| 6. Data filtering | done | `repro/level-1` | pending post-push record | 54 passed | Conservative cleaned/discarded split with decisions | Invalid and binary-to-tie judgments are discarded |
+| 7. Toy test suite | in_progress | `repro/level-1` | - | not run | Consolidating five required cases and end-to-end invariants | - |
 | 8. CLI and toy pipeline | not_started | `repro/level-1` | - | - | - | - |
 | 9. Level 1 report | not_started | `repro/level-1` | - | - | - | - |
 
@@ -69,8 +69,18 @@
 
 - Status: `done`
 - Completed: 2026-07-18
-- Commit: pending post-push record
+- Commit: `c05cb6d93bef95718a5ba07cb7bd1fc2cbdc89b8`
 - Tests: `PYTHONPATH=src /tmp/elspr-reproduction-venv/bin/pytest tests/test_reconstruction.py tests/test_entropy.py tests/test_scc_metrics.py tests/test_graph_build.py tests/test_pair_aggregation.py tests/test_package.py`
 - Result: 45 tests pass; unequal and equal in-degree cycles, preserved inter-SCC edges, immutability, isolated nodes, edge provenance, and quotient acyclicity are covered
 - Paper assumptions/deviations: the reconstructed ordinary graph may contain reciprocal tie edges; the contracted tie-class quotient, not the raw DiGraph, is required to be a DAG
 - Next: derive ordered target labels and split raw judgments into cleaned and discarded sets
+
+## Stage 6 - Data filtering
+
+- Status: `done`
+- Completed: 2026-07-18
+- Commit: pending post-push record
+- Tests: `PYTHONPATH=src /tmp/elspr-reproduction-venv/bin/pytest tests/test_filtering.py tests/test_reconstruction.py tests/test_entropy.py tests/test_scc_metrics.py tests/test_graph_build.py tests/test_pair_aggregation.py tests/test_package.py`
+- Result: 54 tests pass; ordered win/lose targets, explicit ties, binary-to-tie discard, invalid input, question isolation, missing relations, and count conservation are covered
+- Paper assumptions/deviations: original records are never relabeled; every input appears exactly once in cleaned or discarded with an auditable decision
+- Next: consolidate the five required toy cases and assert cross-module end-to-end invariants
