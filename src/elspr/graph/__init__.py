@@ -5,5 +5,21 @@ from elspr.graph.build import (
     QuestionGraph,
     build_question_graph,
 )
+from elspr.graph.scc import (
+    SCCAnalysis,
+    analyze_scc,
+    dataset_non_transitivity,
+    is_non_transitive_component,
+    tarjan_scc,
+)
 
-__all__ = ["IncompleteQuestionError", "QuestionGraph", "build_question_graph"]
+__all__ = [
+    "IncompleteQuestionError",
+    "QuestionGraph",
+    "SCCAnalysis",
+    "analyze_scc",
+    "build_question_graph",
+    "dataset_non_transitivity",
+    "is_non_transitive_component",
+    "tarjan_scc",
+]
