@@ -39,3 +39,16 @@ redistribution license for it.
    text, splits, and some evaluation details remain unavailable.
 5. Until the supplementary assets are recovered, Level 3 is blocked and Level
    2 uses explicit, versioned substitute configurations.
+
+## Local environment note
+
+On the development Mac (macOS 26.3), files linked from uv's cache can inherit
+the `UF_HIDDEN` flag. Python 3.11.13 then skips editable-install `.pth` files.
+The verified local workaround is:
+
+```bash
+uv sync --all-groups --no-editable --link-mode=copy
+```
+
+This installs the package directory rather than relying on a `.pth` path.
+Ubuntu GitHub Actions does not use this macOS filesystem behavior.

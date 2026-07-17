@@ -26,6 +26,9 @@ uv run ruff check .
 uv run ruff format --check .
 ```
 
+If editable imports fail on macOS because `.pth` files have the `UF_HIDDEN`
+flag, use the audited workaround documented in `REPRODUCIBILITY.md`.
+
 The complete target behavior is specified in [`GOAL.md`](GOAL.md), current
 status in [`PROGRESS.md`](PROGRESS.md), and paper ambiguities in
 [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md).
