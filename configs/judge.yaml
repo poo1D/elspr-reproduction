@@ -1,0 +1,7 @@
+provider: dry_run
+model: qwen2.5-max
+prompt_template: configs/prompts/cot_v1.txt
+temperature: 0
+max_retries: 3
+requests_per_minute: 30
+cache_dir: artifacts/cache

@@ -1,0 +1,7 @@
+seed: 20260718
+split: unseen
+metrics:
+  - rho_non_trans
+  - tau_avg
+  - tie_ratio
+bootstrap_samples: 1000

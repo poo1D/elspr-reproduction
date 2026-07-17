@@ -1,0 +1,5 @@
+source: toy
+seed: 20260718
+question_limit: 50
+response_model_limit: 5
+output_dir: artifacts

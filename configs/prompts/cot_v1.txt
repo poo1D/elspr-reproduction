@@ -1,0 +1,15 @@
+You are evaluating two candidate responses to the same instruction.
+
+Instruction:
+{instruction}
+
+Response A:
+{left_response}
+
+Response B:
+{right_response}
+
+Reason carefully, then output exactly one final label: A or B.
+
+This is a documented placeholder because the paper's exact prompt template is
+only referenced in unavailable supplementary material.

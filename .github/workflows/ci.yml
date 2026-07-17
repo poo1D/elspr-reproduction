@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.7.19"
+          enable-cache: true
+      - name: Install Python
+        run: uv python install 3.11
+      - name: Sync
+        run: uv sync --frozen --all-groups
+      - name: Lint
+        run: uv run ruff check .
+      - name: Format
+        run: uv run ruff format --check .
+      - name: Tests
+        run: uv run pytest
+      - name: CLI smoke test
+        run: uv run elspr version
+      - name: Reject likely tracked secrets
+        run: |
+          if git grep -nEI '(sk-[A-Za-z0-9_-]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16})'; then
+            echo "Potential credential detected"
+            exit 1
+          fi
+      - name: Reject oversized tracked files
+        run: |
+          oversized="$(git ls-files -z | xargs -0 -I{} sh -c 'test "$(wc -c < "$1")" -le 52428800 || echo "$1"' _ {})"
+          test -z "$oversized" || { echo "$oversized"; exit 1; }
