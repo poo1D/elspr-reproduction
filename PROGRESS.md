@@ -123,3 +123,13 @@
 - Result: exact standard CoT prompt and public response/code assets are now available and pinned in `UPSTREAM_AUDIT.md`
 - Remaining Level 3 gaps: paper judgment outputs, training datasets, exact 14/7 model split, training implementation/configuration, checkpoints, and complete evaluation provenance
 - Compatibility note: the published author code contains edge-direction, degree, logarithm-base, SCC-size, and external-edge-preservation differences from the paper definitions
+
+### Level 2 readiness gate
+
+- Assessed: 2026-07-18
+- Verified subset: 5 public model-response files, 129 identical shared instructions per model, with byte lengths and SHA-256 hashes pinned in `LEVEL_2_READINESS.md`
+- Minimal planned run: 50 deterministically selected questions and 1,000 dual-order judge requests
+- Can proceed after Level 1 merge: selective downloader, manifest generation, request rendering, and zero-cost dry run
+- Requires separate authorization: paid judge API credentials and budget
+- Current host limits: no NVIDIA GPU and approximately 2.8 GiB free disk during audit
+- Next: obtain explicit approval before merging PR #1, tagging Level 1, or creating `repro/level-2`
