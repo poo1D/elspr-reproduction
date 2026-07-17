@@ -5,9 +5,9 @@
 | 0. Bootstrap | done | `main` | `f7701cdac473aad2632f1d6eac2ed0cfa050f556` | passed | Reproducible Python 3.11 project initialized | Missing supplementary assets documented |
 | 1. Pair aggregation | done | `repro/level-1` | `2b8c3854f416491b3974699d9412f82b543e161a` | 11 passed | Strict schemas and deterministic dual-order aggregation | Invalid, missing, and duplicate orders are rejected |
 | 2. Graph construction | done | `repro/level-1` | `a1f8c03305b041e283f1f2c83543a42159e46df2` | 20 passed | Complete tie-aware tournament graph builder | Incomplete questions are rejected |
-| 3. SCC analysis | done | `repro/level-1` | pending post-push record | 29 passed | Deterministic Tarjan SCC and vertex-weighted non-transitivity | All-pairs tie SCCs are excluded |
-| 4. Structural entropy | in_progress | `repro/level-1` | - | not run | Implementing directed H2, tau, and tau_avg | - |
-| 5. SCC reconstruction | not_started | `repro/level-1` | - | - | - | - |
+| 3. SCC analysis | done | `repro/level-1` | `f887495acd72f55274e23818021d0185f1ad8405` | 29 passed | Deterministic Tarjan SCC and vertex-weighted non-transitivity | All-pairs tie SCCs are excluded |
+| 4. Structural entropy | done | `repro/level-1` | pending post-push record | 39 passed | Directed H2, tau, and unweighted tau_avg | Zero-volume cases return zero; out-of-range values warn |
+| 5. SCC reconstruction | in_progress | `repro/level-1` | - | not run | Reconstructing SCCs by original global in-degree | - |
 | 6. Data filtering | not_started | `repro/level-1` | - | - | - | - |
 | 7. Toy test suite | not_started | `repro/level-1` | - | - | - | - |
 | 8. CLI and toy pipeline | not_started | `repro/level-1` | - | - | - | - |
@@ -49,8 +49,18 @@
 
 - Status: `done`
 - Completed: 2026-07-18
-- Commit: pending post-push record
+- Commit: `f887495acd72f55274e23818021d0185f1ad8405`
 - Tests: `PYTHONPATH=src /tmp/elspr-reproduction-venv/bin/pytest tests/test_scc_metrics.py tests/test_graph_build.py tests/test_pair_aggregation.py tests/test_package.py`
 - Result: 29 tests pass; deterministic Tarjan output matches NetworkX partitions and Cases A-C plus mixed position-bias and dataset weighting are covered
 - Paper assumptions/deviations: Equation 3 is implemented as the number of vertices in qualifying SCCs divided by all vertices, following the paper's prose rather than counting SCC objects
 - Next: implement directed two-dimensional structural entropy and normalization edge cases
+
+## Stage 4 - Structural entropy
+
+- Status: `done`
+- Completed: 2026-07-18
+- Commit: pending post-push record
+- Tests: `PYTHONPATH=src /tmp/elspr-reproduction-venv/bin/pytest tests/test_entropy.py tests/test_scc_metrics.py tests/test_graph_build.py tests/test_pair_aggregation.py tests/test_package.py`
+- Result: 39 tests pass; linear, cycle, all-tie, singleton-to-multi, multi-to-singleton, empty, zero-volume, and dataset-average cases are covered
+- Paper assumptions/deviations: `g_j` excludes only singleton-to-singleton cross-SCC edges; tau is not clipped and emits a warning if numerical or formula behavior leaves [0, 1]
+- Next: reconstruct SCC internals from original global in-degree and validate the tie-quotient DAG
