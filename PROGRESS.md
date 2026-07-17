@@ -142,4 +142,5 @@
 - Fix: dependency-free deterministic SVG rendering for raw and reconstructed graphs, with single-headed preference arrows and double-headed tie arrows
 - Additional evidence: the general analysis output now includes actual SCC partitions, and `filter` emits reconstructed graph JSON/SVG files plus a manifest
 - Validation: 70 tests, Ruff lint/format, lock check, five-case CLI smoke test, and local visual inspection all passed
-- CI: pending for the additive conformance fix
+- CI: push run `29598435561` and pull-request run `29598438322` passed at
+  documentation head `0ac6afb36b92ac7a66e357605a24ed8fbdeda120`

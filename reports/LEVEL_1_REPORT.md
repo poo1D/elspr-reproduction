@@ -30,8 +30,10 @@ ordered judgments
 - Lockfile: frozen sync and lock check passed
 - Smoke test: all five toy cases, ten SVG graph visualizations, and Markdown
   report generated successfully
-- CI: GitHub Actions passed for both branch-push and Draft PR triggers at the
-  Stage 8 implementation SHA
+- CI: GitHub Actions push run `29598435561` and pull-request run `29598438322`
+  passed at documentation head
+  `0ac6afb36b92ac7a66e357605a24ed8fbdeda120`, which includes visualization
+  implementation commit `65b5fb1bc6b3d1338fee33a7608a15afe5c90cb7`
 
 The clean local validation commands were:
 
