@@ -10,7 +10,7 @@
 | 5. SCC reconstruction | done | `repro/level-1` | `c05cb6d93bef95718a5ba07cb7bd1fc2cbdc89b8` | 45 passed | Original-in-degree SCC reconstruction and quotient DAG | Equal scores remain bidirectional tie classes |
 | 6. Data filtering | done | `repro/level-1` | `f3b84b691bd47eb5aa90baef8d93ab3f7bef85e1` | 54 passed | Conservative cleaned/discarded split with decisions | Invalid and binary-to-tie judgments are discarded |
 | 7. Toy test suite | done | `repro/level-1` | `71816ec1b30887c34d990698905942be1c3579ff` | 63 passed | Five required cross-module cases and JSONL round trip | Binary toy judge represents ties as order instability |
-| 8. CLI and toy pipeline | done | `repro/level-1` | pending post-push record | 67 passed | Artifact-producing graph, analysis, filter, toy, and report commands | Level 2 commands are not stubbed as complete |
+| 8. CLI and toy pipeline | done | `repro/level-1` | `dc2dede9ebe6c64891c1f248a3cfd11da7886b4a` | 67 passed | Artifact-producing graph, analysis, filter, toy, and report commands | Level 2 commands are not stubbed as complete |
 | 9. Level 1 report | in_progress | `repro/level-1` | - | not run | Running full validation and preparing final report | - |
 
 ## Stage 0 - Bootstrap
@@ -99,8 +99,18 @@
 
 - Status: `done`
 - Completed: 2026-07-18
-- Commit: pending post-push record
+- Commit: `dc2dede9ebe6c64891c1f248a3cfd11da7886b4a`
 - Tests: `PYTHONPATH=src /tmp/elspr-reproduction-venv/bin/pytest tests/test_cli_pipeline.py tests/test_end_to_end_toy.py tests/test_filtering.py tests/test_reconstruction.py tests/test_entropy.py tests/test_scc_metrics.py tests/test_graph_build.py tests/test_pair_aggregation.py tests/test_package.py`
 - Result: 67 tests pass; `build-graphs`, `analyze`, `filter`, `toy-pipeline`, and `report` compose successfully, and one command writes all five cases with traceable JSON/JSONL artifacts
 - Paper assumptions/deviations: paid judge API and GPU training commands remain Level 2 work and are not exposed as misleading no-op stubs
 - Next: run clean full validation, publish the Level 1 report, and verify GitHub Actions
+
+## Stage 9 - Level 1 report
+
+- Status: `in_progress`
+- Completed: pending final CI
+- Commit: pending post-push record
+- Tests: clean frozen environment completed with 67 passed; Ruff lint and format checks passed; five-case CLI pipeline and report smoke test passed
+- Result: `reports/LEVEL_1_REPORT.md` records method coverage, exact toy metrics, commands, assumptions, and Level 2/3 scope boundaries
+- Paper assumptions/deviations: exact empirical reproduction remains outside Level 1 and is not claimed
+- Next: push this report commit, verify both GitHub Actions triggers, then record Stage 9 as done

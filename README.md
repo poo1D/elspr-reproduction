@@ -15,6 +15,36 @@ The implementation follows one critical edge convention: an edge points from
 the worse response to the better response, so node in-degree is its win count.
 Ties are represented by two directed edges.
 
+## Level 1 method
+
+For every unordered response pair, the pipeline requires judgments in both
+presentation orders. Complementary `win/lose` outcomes produce one preference
+edge; any other valid combination produces a bidirectional tie. Missing,
+invalid, or duplicate orders reject the question rather than silently filling
+the graph.
+
+Tarjan SCC analysis marks a component non-transitive only when it has more than
+two nodes and is not an all-pairs tie. The dataset metric is vertex-weighted:
+
+```text
+rho_non_trans =
+  nodes in non-transitive SCCs across questions
+  / all nodes across questions
+```
+
+The directed two-dimensional structural entropy implementation follows
+Equation 4 of the paper. SCC volume is the sum of node in-degrees. The external
+term excludes only edges between two singleton SCCs. Per-question entropy is
+normalized as `tau = H2 / log2(|V|)`, and `tau_avg` is the unweighted question
+mean. Empty graphs, single-node graphs, and zero-volume graphs return zero;
+values are not clipped, and an out-of-range result emits a warning.
+
+Reconstruction freezes each node's original global in-degree, replaces
+internal SCC edges with degree-ranked edges, and preserves SCC-external edges.
+Equal scores remain bidirectional ties. The raw reconstructed `DiGraph` can
+therefore contain two-cycles; the graph obtained by contracting tie
+equivalence classes is required to be a DAG.
+
 ## Development
 
 Requirements: `uv` and Python 3.11 or newer.
@@ -61,6 +91,12 @@ uv run elspr filter \
 graph before writing `cleaned.jsonl`, `discarded.jsonl`, and auditable decisions.
 Judge API, training, and empirical evaluation commands belong to Level 2 and
 are not represented as completed functionality in Level 1.
+
+## Verified Level 1 result
+
+Level 1 has 67 deterministic tests covering the five required toy cases and
+the CLI pipeline. The detailed results and reproducibility boundaries are in
+[`reports/LEVEL_1_REPORT.md`](reports/LEVEL_1_REPORT.md).
 
 ## License
 
