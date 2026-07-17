@@ -10,8 +10,8 @@
 | 5. SCC reconstruction | done | `repro/level-1` | `c05cb6d93bef95718a5ba07cb7bd1fc2cbdc89b8` | 45 passed | Original-in-degree SCC reconstruction and quotient DAG | Equal scores remain bidirectional tie classes |
 | 6. Data filtering | done | `repro/level-1` | `f3b84b691bd47eb5aa90baef8d93ab3f7bef85e1` | 54 passed | Conservative cleaned/discarded split with decisions | Invalid and binary-to-tie judgments are discarded |
 | 7. Toy test suite | done | `repro/level-1` | `71816ec1b30887c34d990698905942be1c3579ff` | 63 passed | Five required cross-module cases and JSONL round trip | Binary toy judge represents ties as order instability |
-| 8. CLI and toy pipeline | done | `repro/level-1` | `dc2dede9ebe6c64891c1f248a3cfd11da7886b4a` | 67 passed | Artifact-producing graph, analysis, filter, toy, and report commands | Level 2 commands are not stubbed as complete |
-| 9. Level 1 report | done | `repro/level-1` | `2f09af2ddd79527a6496015f2571f26f8757e6b4` | 67 passed + CI | Public Level 1 report and reproducibility evidence | Exact empirical reproduction remains Level 2/3 |
+| 8. CLI and toy pipeline | done | `repro/level-1` | `dc2dede9ebe6c64891c1f248a3cfd11da7886b4a` | 70 current | Artifact-producing graph, analysis, filter, toy, report, and SVG visualization commands | Level 2 commands are not stubbed as complete |
+| 9. Level 1 report | done | `repro/level-1` | `2f09af2ddd79527a6496015f2571f26f8757e6b4` | 70 current + prior CI | Public Level 1 report and reproducibility evidence | Exact empirical reproduction remains Level 2/3 |
 
 ## Stage 0 - Bootstrap
 
@@ -133,3 +133,13 @@
 - Requires separate authorization: paid judge API credentials and budget
 - Current host limits: no NVIDIA GPU and approximately 2.8 GiB free disk during audit
 - Next: obtain explicit approval before merging PR #1, tagging Level 1, or creating `repro/level-2`
+
+### Post-completion Level 1 conformance audit
+
+- Audited: 2026-07-18
+- Fix commit: `65b5fb1bc6b3d1338fee33a7608a15afe5c90cb7`
+- Gap found: the Level 1 scope required visualization, but the initial CLI emitted graph JSON only
+- Fix: dependency-free deterministic SVG rendering for raw and reconstructed graphs, with single-headed preference arrows and double-headed tie arrows
+- Additional evidence: the general analysis output now includes actual SCC partitions, and `filter` emits reconstructed graph JSON/SVG files plus a manifest
+- Validation: 70 tests, Ruff lint/format, lock check, five-case CLI smoke test, and local visual inspection all passed
+- CI: pending for the additive conformance fix

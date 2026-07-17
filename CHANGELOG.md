@@ -16,4 +16,8 @@ All notable project changes are documented here.
   data filtering.
 - Artifact-producing `build-graphs`, `analyze`, `filter`, `toy-pipeline`, and
   `report` commands.
-- A 67-test Level 1 suite and public reproduction report.
+- Deterministic SVG visualizations for original and reconstructed graphs,
+  including explicit worse-to-better and bidirectional-tie arrows.
+- Per-question SCC partitions and reconstructed graph JSON/SVG artifacts in
+  the general CLI pipeline.
+- A 70-test Level 1 suite and public reproduction report.

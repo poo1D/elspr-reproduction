@@ -16,6 +16,7 @@ ordered judgments
   -> global-in-degree SCC reconstruction
   -> tie-class quotient DAG validation
   -> cleaned/discarded judgment split
+  -> deterministic raw/reconstructed SVG visualization
 ```
 
 ## Environment and validation
@@ -23,11 +24,12 @@ ordered judgments
 - Date: 2026-07-18
 - Python: 3.11.13
 - Dependency manager: uv 0.7.19
-- Tests: 67 passed
+- Tests: 70 passed
 - Lint: Ruff passed
 - Format: Ruff format check passed
 - Lockfile: frozen sync and lock check passed
-- Smoke test: all five toy cases and Markdown report generated successfully
+- Smoke test: all five toy cases, ten SVG graph visualizations, and Markdown
+  report generated successfully
 - CI: GitHub Actions passed for both branch-push and Draft PR triggers at the
   Stage 8 implementation SHA
 
@@ -60,6 +62,22 @@ These are synthetic verification values, not claims that the paper's empirical
 tables were reproduced. The all-tie case demonstrates why SCC
 non-transitivity and structural entropy are complementary: its
 `rho_non_trans` is zero while `tau` is maximal.
+
+## Artifact coverage
+
+The one-command toy run writes, for every case:
+
+- ordered judgments and aggregated pair relations;
+- the original graph as deterministic JSON and SVG;
+- explicit SCC and non-transitive-component membership;
+- the reconstructed graph as deterministic JSON and SVG;
+- cleaned and discarded JSONL data;
+- per-case analysis and a cross-case Markdown report.
+
+The SVG renderer uses a stable circular layout. Blue arrows point from worse
+to better, while orange double-headed arrows represent reciprocal ties. The
+same outputs are available in the general `build-graphs`, `analyze`, and
+`filter` command sequence, not only in the toy fixture.
 
 ## Required cases
 

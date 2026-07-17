@@ -45,6 +45,11 @@ Equal scores remain bidirectional ties. The raw reconstructed `DiGraph` can
 therefore contain two-cycles; the graph obtained by contracting tie
 equivalence classes is required to be a DAG.
 
+Every raw and reconstructed graph can also be rendered as a deterministic SVG.
+Blue single-headed arrows follow the worse-to-better convention; orange
+double-headed arrows represent ties. Rendering is dependency-free and uses a
+stable circular node layout so identical graphs produce identical files.
+
 ## Development
 
 Requirements: `uv` and Python 3.11 or newer.
@@ -92,13 +97,16 @@ uv run elspr filter \
 ```
 
 `build-graphs` rejects incomplete dual-order pairs. `filter` reconstructs every
-graph before writing `cleaned.jsonl`, `discarded.jsonl`, and auditable decisions.
-Judge API, training, and empirical evaluation commands belong to Level 2 and
-are not represented as completed functionality in Level 1.
+graph before writing reconstructed graph JSON/SVG files, `cleaned.jsonl`,
+`discarded.jsonl`, and auditable decisions. `analyze` includes the actual SCC
+partitions as well as aggregate metrics. Judge API, training, and empirical
+evaluation commands belong to Level 2 and are not represented as completed
+functionality in Level 1.
 
 ## Verified Level 1 result
 
-Level 1 has 67 deterministic tests covering the five required toy cases and
+Level 1 has 70 deterministic tests covering the five required toy cases,
+graph visualization, and
 the CLI pipeline. The detailed results and reproducibility boundaries are in
 [`reports/LEVEL_1_REPORT.md`](reports/LEVEL_1_REPORT.md).
 
