@@ -42,13 +42,17 @@ redistribution license for it.
 
 ## Local environment note
 
-On the development Mac (macOS 26.3), files linked from uv's cache can inherit
-the `UF_HIDDEN` flag. Python 3.11.13 then skips editable-install `.pth` files.
-The verified local workaround is:
+On the development Mac (macOS 26.3), files inside a repository-local `.venv`
+under Desktop can inherit `UF_HIDDEN` and provenance metadata. Python 3.11.13
+then skips editable-install `.pth` files or reads copied packages very slowly.
+The verified local workaround is to keep the disposable environment in `/tmp`:
 
 ```bash
-uv sync --all-groups --no-editable --link-mode=copy
+UV_PROJECT_ENVIRONMENT=/tmp/elspr-reproduction-venv \
+  uv sync --all-groups --no-editable --link-mode=copy
+PYTHONPATH=src /tmp/elspr-reproduction-venv/bin/pytest
 ```
 
-This installs the package directory rather than relying on a `.pth` path.
-Ubuntu GitHub Actions does not use this macOS filesystem behavior.
+This installs the package directory outside the affected Desktop tree and uses
+the current source checkout explicitly. Ubuntu GitHub Actions does not use this
+macOS filesystem behavior.
