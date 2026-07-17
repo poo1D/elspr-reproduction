@@ -11,6 +11,12 @@ from elspr.graph.entropy import (
     average_structural_entropy,
     structural_entropy,
 )
+from elspr.graph.reconstruct import (
+    ReconstructionError,
+    ReconstructionResult,
+    reconstruct_sccs,
+    tie_quotient_graph,
+)
 from elspr.graph.scc import (
     SCCAnalysis,
     analyze_scc,
@@ -24,12 +30,16 @@ __all__ = [
     "EntropyAnalysis",
     "EntropyComponent",
     "QuestionGraph",
+    "ReconstructionError",
+    "ReconstructionResult",
     "SCCAnalysis",
     "analyze_scc",
     "average_structural_entropy",
     "build_question_graph",
     "dataset_non_transitivity",
     "is_non_transitive_component",
+    "reconstruct_sccs",
     "structural_entropy",
     "tarjan_scc",
+    "tie_quotient_graph",
 ]
