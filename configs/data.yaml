@@ -1,5 +1,27 @@
-source: toy
-seed: 20260718
+dataset: helpful_base
+source: https://github.com/yy0525/ELSPR
+source_commit: e9886b3a96f71cee654e1c758d03a026f3cbc32f
 question_limit: 50
-response_model_limit: 5
-output_dir: artifacts
+output_dir: artifacts/raw/level2-helpful-base-5x50
+expected_manifest: configs/manifests/level2_helpful_base_5x50.json
+files:
+  - model_id: Meta-Llama-3-8B-Instruct
+    url: https://raw.githubusercontent.com/yy0525/ELSPR/e9886b3a96f71cee654e1c758d03a026f3cbc32f/data/selected_models/Meta-Llama-3-8B-Instruct/helpful_base.json
+    bytes: 312528
+    sha256: 5acf5abb6489a3e0f8aa1f7d6d7c061898562445db7caf6f901160e4a30baafc
+  - model_id: Mixtral-8x7B-Instruct-v0.1
+    url: https://raw.githubusercontent.com/yy0525/ELSPR/e9886b3a96f71cee654e1c758d03a026f3cbc32f/data/selected_models/Mixtral-8x7B-Instruct-v0.1/helpful_base.json
+    bytes: 218432
+    sha256: 81a63f65975b70e3ac0badf487fc12ddf9654be75a8d52f8b287cfb4f4623ca2
+  - model_id: alpaca-7b
+    url: https://raw.githubusercontent.com/yy0525/ELSPR/e9886b3a96f71cee654e1c758d03a026f3cbc32f/data/selected_models/alpaca-7b/helpful_base.json
+    bytes: 71584
+    sha256: 610a1c73eb60715a48d32ca9c03bbc90781dd10a022c8dca10ded5ef2a6c1676
+  - model_id: gpt-3.5-turbo-0613
+    url: https://raw.githubusercontent.com/yy0525/ELSPR/e9886b3a96f71cee654e1c758d03a026f3cbc32f/data/selected_models/gpt-3.5-turbo-0613/helpful_base.json
+    bytes: 195514
+    sha256: 3ab3c0b6a0a3a3265afb828b002d7ae4f0fde946d8fcd19c155583f205e33a58
+  - model_id: vicuna-7b
+    url: https://raw.githubusercontent.com/yy0525/ELSPR/e9886b3a96f71cee654e1c758d03a026f3cbc32f/data/selected_models/vicuna-7b/helpful_base.json
+    bytes: 154366
+    sha256: 8de7919443b541f9f33da8b1f73153ad194c4ddd22adc032f97ad851c12d145f

@@ -9,6 +9,7 @@ from typing import Annotated
 
 import typer
 
+from elspr.data import load_data_config, prepare_data
 from elspr.filtering import filter_question_judgments
 from elspr.graph import (
     analyze_scc,
@@ -43,6 +44,20 @@ def version() -> None:
     from elspr import __version__
 
     typer.echo(__version__)
+
+
+@app.command("prepare-data")
+def prepare_data_command(
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+) -> None:
+    """Prepare a pinned, checksum-verified response subset."""
+
+    result = prepare_data(load_data_config(config))
+    typer.echo(
+        f"prepared questions={result.question_count} "
+        f"models={result.model_count} responses={result.response_count} "
+        f"at {result.responses_path.parent}"
+    )
 
 
 def _safe_name(value: str) -> str:
