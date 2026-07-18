@@ -67,6 +67,7 @@ def _config(
         source="https://example.test/upstream",
         source_commit=COMMIT,
         question_limit=question_limit,
+        train_question_count=max(1, question_limit - 1),
         output_dir=tmp_path / "output",
         files=[second, first],
     )
@@ -105,6 +106,8 @@ def test_prepare_data_verifies_aligns_and_selects_deterministically(
         f"https://example.test/upstream@{COMMIT}"
     }
     assert manifest["selection"]["question_ids"] == expected_ids
+    assert manifest["split"]["train_question_ids"] == expected_ids[:1]
+    assert manifest["split"]["evaluation_question_ids"] == expected_ids[1:]
     assert manifest["generated_at"] == "2026-07-18T00:00:00+00:00"
     assert (
         manifest["responses_artifact"]["bytes"] == result.responses_path.stat().st_size
@@ -156,7 +159,8 @@ def test_prepare_data_cli_writes_responses_and_manifest(tmp_path: Path) -> None:
                 "dataset: helpful_base",
                 "source: https://example.test/upstream",
                 f"source_commit: {COMMIT}",
-                "question_limit: 1",
+                "question_limit: 2",
+                "train_question_count: 1",
                 f"output_dir: {config.output_dir}",
                 "files:",
                 *[
@@ -178,6 +182,6 @@ def test_prepare_data_cli_writes_responses_and_manifest(tmp_path: Path) -> None:
     result = runner.invoke(app, ["prepare-data", "--config", str(config_path)])
 
     assert result.exit_code == 0, result.output
-    assert "questions=1 models=2 responses=2" in result.output
+    assert "questions=2 models=2 responses=4" in result.output
     assert (config.output_dir / "responses.jsonl").exists()
     assert (config.output_dir / "manifest.json").exists()

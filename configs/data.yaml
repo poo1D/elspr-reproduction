@@ -2,6 +2,7 @@ dataset: helpful_base
 source: https://github.com/yy0525/ELSPR
 source_commit: e9886b3a96f71cee654e1c758d03a026f3cbc32f
 question_limit: 50
+train_question_count: 40
 output_dir: artifacts/raw/level2-helpful-base-5x50
 expected_manifest: configs/manifests/level2_helpful_base_5x50.json
 files:

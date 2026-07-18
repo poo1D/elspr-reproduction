@@ -43,7 +43,8 @@ class DataPreparationConfig(StrictModel):
     dataset: str = Field(min_length=1)
     source: str = Field(min_length=1)
     source_commit: str = Field(pattern=r"^[0-9a-f]{40}$")
-    question_limit: int = Field(ge=1)
+    question_limit: int = Field(ge=2)
+    train_question_count: int = Field(ge=1)
     output_dir: Path
     files: list[UpstreamResponseFile] = Field(min_length=2)
     expected_manifest: Path | None = None
@@ -53,6 +54,11 @@ class DataPreparationConfig(StrictModel):
         model_ids = [item.model_id for item in self.files]
         if len(model_ids) != len(set(model_ids)):
             raise ValueError("files must contain unique model_id values")
+        if self.train_question_count >= self.question_limit:
+            raise ValueError(
+                "train_question_count must be smaller than question_limit "
+                "to preserve an unseen evaluation split"
+            )
         return self
 
 
@@ -200,6 +206,11 @@ def _manifest_payload(
             "algorithm": "sha256_instruction_ascending",
             "question_limit": config.question_limit,
             "question_ids": question_ids,
+        },
+        "split": {
+            "algorithm": "selected_sha256_prefix_train_remainder_evaluation",
+            "train_question_ids": question_ids[: config.train_question_count],
+            "evaluation_question_ids": question_ids[config.train_question_count :],
         },
         "files": [
             {

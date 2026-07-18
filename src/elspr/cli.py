@@ -31,6 +31,7 @@ from elspr.judging import (
 )
 from elspr.schemas import JudgmentRecord
 from elspr.toy import TOY_CASES, run_toy_case
+from elspr.training import build_training_variants, load_training_data_config
 
 app = typer.Typer(
     help="Auditable ELSPR preference-data purification pipeline.",
@@ -101,6 +102,19 @@ def judge(
         f"execution cached={execution.cached_count} new={execution.new_count} "
         f"failed={execution.failed_count} pending={execution.pending_count} "
         f"actual_cost_cny={execution.actual_cost_cny:.6f}"
+    )
+
+
+@app.command("prepare-training")
+def prepare_training(
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+) -> None:
+    """Build traceable raw, cleaned, and size-matched random SFT data."""
+
+    result = build_training_variants(load_training_data_config(config))
+    typer.echo(
+        f"training-data raw={result.raw_count} cleaned={result.cleaned_count} "
+        f"random={result.random_count} at {result.manifest_path.parent}"
     )
 
 
