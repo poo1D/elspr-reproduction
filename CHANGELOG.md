@@ -21,3 +21,10 @@ All notable project changes are documented here.
 - Per-question SCC partitions and reconstructed graph JSON/SVG artifacts in
   the general CLI pipeline.
 - A 70-test Level 1 suite and public reproduction report.
+- Selective checksum-verified preparation of a pinned five-model,
+  50-question Level 2 response subset.
+- A committed source/selection/derived-artifact manifest without vendored
+  upstream responses.
+- Deterministic rendering of all 1,000 ordered judge requests with stable
+  pair/request IDs and a zero-paid-call token-estimate report.
+- An 82-test suite covering Level 1 and the current Level 2 preparation path.

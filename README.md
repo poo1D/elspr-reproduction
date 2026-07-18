@@ -103,6 +103,19 @@ partitions as well as aggregate metrics. Judge API, training, and empirical
 evaluation commands belong to Level 2 and are not represented as completed
 functionality in Level 1.
 
+Prepare the pinned Level 2 subset and render the zero-cost judge dry run:
+
+```bash
+uv run elspr prepare-data --config configs/data.yaml
+uv run elspr judge --config configs/judge.yaml --resume
+```
+
+These commands verify all source and derived hashes, write 250 response rows,
+and render 1,000 dual-order requests. `provider: dry_run` refuses paid
+execution. The token count is an explicitly approximate UTF-8 byte heuristic,
+not a provider billing quote. See
+[`reports/LEVEL_2_DRY_RUN.md`](reports/LEVEL_2_DRY_RUN.md).
+
 ## Verified Level 1 result
 
 Level 1 has 70 deterministic tests covering the five required toy cases,

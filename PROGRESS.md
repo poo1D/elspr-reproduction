@@ -144,3 +144,31 @@
 - Validation: 70 tests, Ruff lint/format, lock check, five-case CLI smoke test, and local visual inspection all passed
 - CI: push run `29598435561` and pull-request run `29598438322` passed at
   documentation head `0ac6afb36b92ac7a66e357605a24ed8fbdeda120`
+
+## Level 2 - Small-scale empirical reproduction
+
+| Stage | Status | Branch | Commit | Tests | Main result | Remaining gate |
+|---|---|---|---|---|---|---|
+| 1. Public response preparation | done | `repro/level-2` | `1a920bd18992bef4317ec4b454ab15ab5f168bd9` | 75 passed | Five pinned models, 50 deterministic questions, and 250 validated responses | None |
+| 2. Judge request dry run | done | `repro/level-2` | `c3319b7eb0f54715898097ef79fc9517291b6b6c` | 82 passed | 1,000 stable dual-order requests and explicit approximate token estimate | Provider execution is not yet implemented |
+| 3. Provider judgment execution | in progress | `repro/level-2` | - | - | No paid calls executed | Needs executor, current pricing, credential, and explicit budget approval |
+| 4. Training variants | pending | `repro/level-2` | - | - | - | Needs judgments and suitable GPU environment |
+| 5. Unseen evaluation and report | pending | `repro/level-2` | - | - | - | Needs trained raw, cleaned, and random variants |
+
+### Level 2 Stage 1 - Public response preparation
+
+- Completed: 2026-07-18
+- Result: the real selective download and preparation command passed against author commit `e9886b3a96f71cee654e1c758d03a026f3cbc32f`
+- Provenance: every source file has a pinned byte length and SHA-256; the selected question IDs and derived response artifact hash are committed in `configs/manifests/level2_helpful_base_5x50.json`
+- Data: 5 models, 129 verified shared upstream questions, 50 selected questions, 250 response rows
+- Repository boundary: downloaded responses remain ignored under `artifacts/raw/`
+
+### Level 2 Stage 2 - Judge request dry run
+
+- Completed: 2026-07-18
+- Result: 1,000 requests, 500 pair IDs, two swapped orders per pair, and 20 requests per question
+- Estimated input: 1,035,690 tokens using the explicitly approximate `utf8_bytes_div4_ceil_v1` heuristic
+- Request artifact SHA-256: `308dece526f571fe0f53273acc9fb3558787a2ca9da44a56235ee6e5bbbdca47`
+- Safety: `provider: dry_run` executed zero paid requests and refuses provider execution
+- Evidence: `reports/LEVEL_2_DRY_RUN.md`
+- Next: implement cache, idempotency, retry, rate limiting, raw-output retention, and resume before requesting API authorization
