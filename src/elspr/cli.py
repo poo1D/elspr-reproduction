@@ -5,7 +5,7 @@ import json
 import re
 from collections import defaultdict
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 import typer
 
@@ -31,7 +31,12 @@ from elspr.judging import (
 )
 from elspr.schemas import JudgmentRecord
 from elspr.toy import TOY_CASES, run_toy_case
-from elspr.training import build_training_variants, load_training_data_config
+from elspr.training import (
+    build_training_variants,
+    load_training_data_config,
+    load_training_run_config,
+    train_lora,
+)
 
 app = typer.Typer(
     help="Auditable ELSPR preference-data purification pipeline.",
@@ -115,6 +120,28 @@ def prepare_training(
     typer.echo(
         f"training-data raw={result.raw_count} cleaned={result.cleaned_count} "
         f"random={result.random_count} at {result.manifest_path.parent}"
+    )
+
+
+@app.command()
+def train(
+    variant: Annotated[Literal["raw", "cleaned", "random"], typer.Option()],
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+    execute_training: Annotated[bool, typer.Option()] = False,
+    resume_from_checkpoint: Annotated[Path | None, typer.Option()] = None,
+) -> None:
+    """Plan or explicitly execute one pinned LoRA training variant."""
+
+    result = train_lora(
+        load_training_run_config(config),
+        variant=variant,
+        execute_training=execute_training,
+        resume_from_checkpoint=resume_from_checkpoint,
+    )
+    typer.echo(
+        f"training variant={result.variant} run_id={result.run_id} "
+        f"examples={result.example_count} plan={result.plan_path} "
+        f"executed={execute_training}"
     )
 
 
