@@ -23,7 +23,11 @@ from elspr.graph import (
     write_graph_svg,
 )
 from elspr.io import read_jsonl, write_jsonl
-from elspr.judging import aggregate_pair_judgments
+from elspr.judging import (
+    aggregate_pair_judgments,
+    judge_dry_run,
+    load_judge_config,
+)
 from elspr.schemas import JudgmentRecord
 from elspr.toy import TOY_CASES, run_toy_case
 
@@ -57,6 +61,23 @@ def prepare_data_command(
         f"prepared questions={result.question_count} "
         f"models={result.model_count} responses={result.response_count} "
         f"at {result.responses_path.parent}"
+    )
+
+
+@app.command()
+def judge(
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+    resume: Annotated[bool, typer.Option()] = False,
+) -> None:
+    """Render and estimate ordered judge requests without paid calls."""
+
+    del resume  # Reserved for the provider execution stage.
+    result = judge_dry_run(load_judge_config(config))
+    typer.echo(
+        f"dry-run questions={result.question_count} models={result.model_count} "
+        f"requests={result.request_count} "
+        f"estimated_input_tokens={result.estimated_input_tokens} "
+        f"maximum_output_tokens={result.maximum_output_tokens}"
     )
 
 
