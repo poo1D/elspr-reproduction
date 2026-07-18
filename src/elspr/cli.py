@@ -10,6 +10,7 @@ from typing import Annotated, Literal
 import typer
 
 from elspr.data import load_data_config, prepare_data
+from elspr.evaluation import evaluate_variants, load_evaluation_config
 from elspr.filtering import filter_question_judgments
 from elspr.graph import (
     analyze_scc,
@@ -142,6 +143,21 @@ def train(
         f"training variant={result.variant} run_id={result.run_id} "
         f"examples={result.example_count} plan={result.plan_path} "
         f"executed={execute_training}"
+    )
+
+
+@app.command()
+def evaluate(
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+) -> None:
+    """Evaluate raw, cleaned, and random models on the frozen unseen split."""
+
+    result = evaluate_variants(load_evaluation_config(config))
+    typer.echo(
+        f"evaluated questions={result.question_count} "
+        f"cleaned_improves_rho={result.cleaned_improves_rho} "
+        f"cleaned_improves_tau={result.cleaned_improves_tau} "
+        f"report={result.report_path}"
     )
 
 
