@@ -1,7 +1,6 @@
-seed: 20260718
-split: unseen
-metrics:
-  - rho_non_trans
-  - tau_avg
-  - tie_ratio
-bootstrap_samples: 1000
+data_manifest: configs/manifests/level2_helpful_base_5x50.json
+training_manifest: artifacts/raw/level2-helpful-base-5x50/training/manifest.json
+raw_judgments: artifacts/raw/level2-helpful-base-5x50/evaluation/raw/judgments.jsonl
+cleaned_judgments: artifacts/raw/level2-helpful-base-5x50/evaluation/cleaned/judgments.jsonl
+random_judgments: artifacts/raw/level2-helpful-base-5x50/evaluation/random/judgments.jsonl
+output_dir: artifacts/raw/level2-helpful-base-5x50/evaluation/report

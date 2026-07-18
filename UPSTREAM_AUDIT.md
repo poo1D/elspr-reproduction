@@ -70,6 +70,10 @@ unquestioned reference implementation:
    nodes, which can remove external outgoing edges.
 6. The author non-transitivity denominator is hard-coded as
    `7 * question_count`, whereas this reproduction derives actual node counts.
+7. The paper describes the evaluator as Qwen2.5-Max, while the published
+   `utils/get_api_answer.py` calls the stable API identifier `qwen-max`.
+   Reproducing the exact historical model behind that alias is therefore not
+   guaranteed by the public code alone.
 
 This project continues to follow the published mathematical definitions and
 keeps compatibility comparisons as a separate future audit, rather than

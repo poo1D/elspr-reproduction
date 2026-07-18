@@ -5,10 +5,12 @@ import json
 import re
 from collections import defaultdict
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 import typer
 
+from elspr.data import load_data_config, prepare_data
+from elspr.evaluation import evaluate_variants, load_evaluation_config
 from elspr.filtering import filter_question_judgments
 from elspr.graph import (
     analyze_scc,
@@ -22,9 +24,20 @@ from elspr.graph import (
     write_graph_svg,
 )
 from elspr.io import read_jsonl, write_jsonl
-from elspr.judging import aggregate_pair_judgments
+from elspr.judging import (
+    aggregate_pair_judgments,
+    execute_judgments,
+    judge_dry_run,
+    load_judge_config,
+)
 from elspr.schemas import JudgmentRecord
 from elspr.toy import TOY_CASES, run_toy_case
+from elspr.training import (
+    build_training_variants,
+    load_training_data_config,
+    load_training_run_config,
+    train_lora,
+)
 
 app = typer.Typer(
     help="Auditable ELSPR preference-data purification pipeline.",
@@ -43,6 +56,109 @@ def version() -> None:
     from elspr import __version__
 
     typer.echo(__version__)
+
+
+@app.command("prepare-data")
+def prepare_data_command(
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+) -> None:
+    """Prepare a pinned, checksum-verified response subset."""
+
+    result = prepare_data(load_data_config(config))
+    typer.echo(
+        f"prepared questions={result.question_count} "
+        f"models={result.model_count} responses={result.response_count} "
+        f"at {result.responses_path.parent}"
+    )
+
+
+@app.command()
+def judge(
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+    resume: Annotated[bool, typer.Option()] = False,
+    execute_paid: Annotated[bool, typer.Option()] = False,
+    approved_budget_cny: Annotated[float, typer.Option(min=0)] = 0.0,
+    max_new_requests: Annotated[int, typer.Option(min=0)] = 0,
+) -> None:
+    """Render requests or execute an explicitly authorized paid batch."""
+
+    judge_config = load_judge_config(config)
+    if judge_config.provider == "dry_run":
+        if execute_paid:
+            raise typer.BadParameter(
+                "provider is dry_run; paid execution was not attempted"
+            )
+        result = judge_dry_run(judge_config)
+        typer.echo(
+            f"dry-run questions={result.question_count} models={result.model_count} "
+            f"requests={result.request_count} "
+            f"estimated_input_tokens={result.estimated_input_tokens} "
+            f"maximum_output_tokens={result.maximum_output_tokens}"
+        )
+        return
+    if not resume:
+        raise typer.BadParameter("provider execution requires --resume")
+    execution = execute_judgments(
+        judge_config,
+        execute_paid=execute_paid,
+        approved_budget_cny=approved_budget_cny,
+        max_new_requests=max_new_requests,
+    )
+    typer.echo(
+        f"execution cached={execution.cached_count} new={execution.new_count} "
+        f"failed={execution.failed_count} pending={execution.pending_count} "
+        f"actual_cost_cny={execution.actual_cost_cny:.6f}"
+    )
+
+
+@app.command("prepare-training")
+def prepare_training(
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+) -> None:
+    """Build traceable raw, cleaned, and size-matched random SFT data."""
+
+    result = build_training_variants(load_training_data_config(config))
+    typer.echo(
+        f"training-data raw={result.raw_count} cleaned={result.cleaned_count} "
+        f"random={result.random_count} at {result.manifest_path.parent}"
+    )
+
+
+@app.command()
+def train(
+    variant: Annotated[Literal["raw", "cleaned", "random"], typer.Option()],
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+    execute_training: Annotated[bool, typer.Option()] = False,
+    resume_from_checkpoint: Annotated[Path | None, typer.Option()] = None,
+) -> None:
+    """Plan or explicitly execute one pinned LoRA training variant."""
+
+    result = train_lora(
+        load_training_run_config(config),
+        variant=variant,
+        execute_training=execute_training,
+        resume_from_checkpoint=resume_from_checkpoint,
+    )
+    typer.echo(
+        f"training variant={result.variant} run_id={result.run_id} "
+        f"examples={result.example_count} plan={result.plan_path} "
+        f"executed={execute_training}"
+    )
+
+
+@app.command()
+def evaluate(
+    config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
+) -> None:
+    """Evaluate raw, cleaned, and random models on the frozen unseen split."""
+
+    result = evaluate_variants(load_evaluation_config(config))
+    typer.echo(
+        f"evaluated questions={result.question_count} "
+        f"cleaned_improves_rho={result.cleaned_improves_rho} "
+        f"cleaned_improves_tau={result.cleaned_improves_tau} "
+        f"report={result.report_path}"
+    )
 
 
 def _safe_name(value: str) -> str:

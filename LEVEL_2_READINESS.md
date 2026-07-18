@@ -13,6 +13,10 @@ C(5, 2) * 50 questions * 2 orders = 1,000 requests
 This document is a readiness record, not evidence that those requests or any
 fine-tuning run have already been completed.
 
+As of 2026-07-18, the selective downloader, frozen manifest, real data
+preparation, request rendering, and zero-cost dry run described below have
+been implemented. See `reports/LEVEL_2_DRY_RUN.md` for measured results.
+
 ## Pinned response subset
 
 Source repository: `https://github.com/yy0525/ELSPR`
@@ -70,15 +74,26 @@ were set; it did not inspect or print secret values.
 
 ## Safe next sequence
 
-After explicit approval to merge Level 1:
+Completed:
 
-1. merge PR #1 and tag the Level 1 result;
-2. create `repro/level-2`;
-3. implement a hash-verifying selective downloader and frozen manifest;
-4. implement request rendering and a zero-cost dry run;
-5. report exact request and token estimates before any paid API call;
-6. request explicit authorization for the provider, credential, and budget;
-7. run judgments, then reuse the validated Level 1 graph/filter pipeline.
+1. PR #1 was merged and Level 1 was tagged `v0.1.0-level1`;
+2. `repro/level-2` and Draft PR #2 were created;
+3. a hash-verifying selective downloader and frozen manifest were implemented;
+4. all 1,000 requests were rendered in a zero-cost dry run.
+
+Completed after the dry run:
+
+1. a resumable, cached, rate-limited provider executor was implemented;
+2. current official `qwen-max` pricing was recorded with a check date;
+3. paid execution was protected by independent mode, flag, budget, request
+   limit, and environment-credential gates.
+
+Next:
+
+1. request explicit authorization for the credential and a small canary budget;
+2. verify actual provider token counts and output parsing on the canary;
+3. only after canary review, run further judgments and reuse the validated
+   Level 1 graph/filter pipeline.
 
 No paid API call, full-corpus download, GPU training, merge, or tag is
 authorized by this readiness record.

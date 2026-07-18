@@ -18,6 +18,14 @@ dependencies = [
   "typer>=0.12,<1",
 ]
 
+[project.optional-dependencies]
+training = [
+  "accelerate>=1.2,<2",
+  "peft>=0.14,<1",
+  "torch>=2.5,<3",
+  "transformers>=4.48,<5",
+]
+
 [project.scripts]
 elspr = "elspr.cli:app"
 

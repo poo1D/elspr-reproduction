@@ -1,0 +1,6 @@
+data_manifest: configs/manifests/level2_helpful_base_5x50.json
+judge_requests: artifacts/raw/level2-helpful-base-5x50/judge-dry-run/judge_requests.jsonl
+raw_judgments: artifacts/raw/level2-helpful-base-5x50/judge-dry-run/execution/judgments.jsonl
+cleaned_judgments: artifacts/raw/level2-helpful-base-5x50/filtered/cleaned.jsonl
+output_dir: artifacts/raw/level2-helpful-base-5x50/training
+random_seed: 20260718

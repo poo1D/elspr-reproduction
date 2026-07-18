@@ -128,11 +128,10 @@
 
 - Assessed: 2026-07-18
 - Verified subset: 5 public model-response files, 129 identical shared instructions per model, with byte lengths and SHA-256 hashes pinned in `LEVEL_2_READINESS.md`
-- Minimal planned run: 50 deterministically selected questions and 1,000 dual-order judge requests
-- Can proceed after Level 1 merge: selective downloader, manifest generation, request rendering, and zero-cost dry run
-- Requires separate authorization: paid judge API credentials and budget
-- Current host limits: no NVIDIA GPU and approximately 2.8 GiB free disk during audit
-- Next: obtain explicit approval before merging PR #1, tagging Level 1, or creating `repro/level-2`
+- Implemented: selective downloader, 40/10 split, manifest, request rendering, dry run, guarded provider executor, training-data variants, LoRA runner, and unseen evaluator
+- Requires separate authorization: paid judge API credential and canary budget
+- Current host limits: no NVIDIA/CUDA GPU, 16 GiB unified memory, and approximately 4.3 GiB free disk during the latest audit
+- Next: obtain authorization for a CNY 0.13 maximum, 10-request canary
 
 ### Post-completion Level 1 conformance audit
 
@@ -144,3 +143,58 @@
 - Validation: 70 tests, Ruff lint/format, lock check, five-case CLI smoke test, and local visual inspection all passed
 - CI: push run `29598435561` and pull-request run `29598438322` passed at
   documentation head `0ac6afb36b92ac7a66e357605a24ed8fbdeda120`
+
+## Level 2 - Small-scale empirical reproduction
+
+| Stage | Status | Branch | Commit | Tests | Main result | Remaining gate |
+|---|---|---|---|---|---|---|
+| 1. Public response preparation | done | `repro/level-2` | `1a920bd18992bef4317ec4b454ab15ab5f168bd9` | 75 passed | Five pinned models, 50 deterministic questions, and 250 validated responses | None |
+| 2. Judge request dry run | done | `repro/level-2` | `c3319b7eb0f54715898097ef79fc9517291b6b6c` | 82 passed | 1,000 stable dual-order requests and explicit approximate token estimate | None |
+| 3. Provider execution tooling | done; execution gated | `repro/level-2` | `49cac22` | 87 passed | Budget-capped, cached, rate-limited, retrying, resumable DashScope executor | Needs credential and explicit paid budget approval |
+| 4. Training data and LoRA tooling | tooling done; runs gated | `repro/level-2` | `eedd83c`, `790943c` | 97 passed | Frozen 40/10 split, raw/cleaned/random builder, and guarded pinned LoRA runner | Needs judgments and suitable CUDA environment |
+| 5. Unseen evaluation and report | tooling done; evaluation gated | `repro/level-2` | `3ee4c86` | 101 passed | Strict three-variant unseen graph metrics and conclusion-direction report | Needs three trained variants and their unseen judgments |
+
+### Level 2 Stage 1 - Public response preparation
+
+- Completed: 2026-07-18
+- Result: the real selective download and preparation command passed against author commit `e9886b3a96f71cee654e1c758d03a026f3cbc32f`
+- Provenance: every source file has a pinned byte length and SHA-256; the selected question IDs and derived response artifact hash are committed in `configs/manifests/level2_helpful_base_5x50.json`
+- Data: 5 models, 129 verified shared upstream questions, 50 selected questions, 250 response rows
+- Repository boundary: downloaded responses remain ignored under `artifacts/raw/`
+
+### Level 2 Stage 2 - Judge request dry run
+
+- Completed: 2026-07-18
+- Result: 1,000 requests, 500 pair IDs, two swapped orders per pair, and 20 requests per question
+- Estimated input: 1,035,690 tokens using the explicitly approximate `utf8_bytes_div4_ceil_v1` heuristic
+- Request artifact SHA-256: `747e50232103aa89754ee1582d354d9180756db3d559bb988c44f65efab089bf`
+- Safety: `provider: dry_run` executed zero paid requests and refuses provider execution
+- Evidence: `reports/LEVEL_2_DRY_RUN.md`
+- Current price snapshot: CNY 2.4/million input tokens and CNY 9.6/million output tokens for `qwen-max`; upper dry-run estimate CNY 12.316056
+- Next: obtain explicit credential and budget authorization, then run a capped canary before any full execution
+
+### Level 2 Stage 3 - Provider execution tooling
+
+- Completed: 2026-07-18
+- Result: a guarded OpenAI-compatible DashScope executor with stable request IDs, permanent per-attempt raw caches, validated result caches, resumable execution, uniform rate limiting, transient retry/backoff, provider token usage, and actual-cost reporting
+- Safety gates: provider mode, `--resume`, `--execute-paid`, approved CNY budget, maximum new-request count, and environment-only API key are all mandatory
+- Validation: retryable 429, invalid successful output, permanent 400, budget rejection, missing authorization/key, raw retention, secret non-persistence, and cache-only resume are tested
+- Paid requests executed: 0
+- Next: request a credential and a small canary budget; do not execute all 1,000 requests immediately
+
+### Level 2 Stage 4 - Training data and LoRA tooling
+
+- Split: first 40 frozen question IDs for training; remaining 10 for unseen evaluation
+- Variant invariants: 800 complete training judgments expected; cleaned is an unchanged raw subset; random is size-matched with seed `20260718`
+- LoRA plan: Qwen2.5-7B-Instruct revision `a09a35458c702b33eeacc393d103063234e8bc28`, rank 8, 3 epochs, learning rate `1e-4`, global batch 16, and full hashed provenance
+- Execution guard: model download/training requires `--execute-training`, at least 25 GiB free disk, one CUDA device, and at least 24 GiB GPU memory
+- Current result: tooling and 97 tests passed; no training data can be built until judgments exist, and no model can train on the current host
+
+### Level 2 Stage 5 - Unseen evaluation tooling
+
+- Result: raw/cleaned/random judgment sets are restricted to the frozen 10-question unseen split and must contain all 20 ordered comparisons per question
+- Outputs: per-question graph JSON/SVG, SCC membership, maximum SCC, tie ratio, `rho_non_trans`, `H2`, `tau`, aggregate `rho_non_trans`, aggregate `tau_avg`, and a Markdown direction report
+- Guard: any training-question leakage, unknown question, missing order, or incomplete variant fails evaluation
+- Validation: 101 tests passed on a synthetic direction-positive closed loop
+- Current result: no empirical metrics claimed because trained variants do not yet exist
+- Resource evidence: `reports/LEVEL_2_RESOURCE_AUDIT.md`

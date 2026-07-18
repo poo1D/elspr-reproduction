@@ -1,9 +1,24 @@
 model_id: Qwen/Qwen2.5-7B-Instruct
+model_revision: a09a35458c702b33eeacc393d103063234e8bc28
 seed: 20260718
 lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.05
+lora_target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
 epochs: 3
 learning_rate: 0.0001
-per_device_batch_size: 8
-gradient_accumulation_steps: 1
+per_device_batch_size: 4
+gradient_accumulation_steps: 4
+expected_device_count: 1
 expected_global_batch_size: 16
+max_sequence_length: 4096
+bf16: true
+gradient_checkpointing: true
+variants_dir: artifacts/raw/level2-helpful-base-5x50/training
 output_dir: runs
+minimum_free_disk_gib: 25
+minimum_gpu_memory_gib: 24

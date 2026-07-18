@@ -103,6 +103,45 @@ partitions as well as aggregate metrics. Judge API, training, and empirical
 evaluation commands belong to Level 2 and are not represented as completed
 functionality in Level 1.
 
+Prepare the pinned Level 2 subset and render the zero-cost judge dry run:
+
+```bash
+uv run elspr prepare-data --config configs/data.yaml
+uv run elspr judge --config configs/judge.yaml --resume
+```
+
+These commands verify all source and derived hashes, write 250 response rows,
+and render 1,000 dual-order requests. `provider: dry_run` refuses paid
+execution. The token count is an explicitly approximate UTF-8 byte heuristic,
+not a provider billing quote. See
+[`reports/LEVEL_2_DRY_RUN.md`](reports/LEVEL_2_DRY_RUN.md).
+
+Provider execution is implemented but intentionally gated. It additionally
+requires `provider: dashscope`, `--resume`, `--execute-paid`, an approved CNY
+budget, a maximum number of new requests, and `DASHSCOPE_API_KEY` in the
+environment. Do not switch the provider until a canary budget is explicitly
+authorized.
+
+After judgments and filtering exist, prepare and plan the three training
+variants:
+
+```bash
+uv run elspr prepare-training --config configs/training_data.yaml
+uv run elspr train --variant raw --config configs/train_qwen.yaml
+uv run elspr train --variant cleaned --config configs/train_qwen.yaml
+uv run elspr train --variant random --config configs/train_qwen.yaml
+```
+
+`train` is plan-only unless `--execute-training` is supplied and all CUDA,
+disk, data-hash, and batch-size gates pass. Evaluate returned variants with:
+
+```bash
+uv run elspr evaluate --config configs/eval.yaml
+```
+
+Current machine and authorization blockers are recorded in
+[`reports/LEVEL_2_RESOURCE_AUDIT.md`](reports/LEVEL_2_RESOURCE_AUDIT.md).
+
 ## Verified Level 1 result
 
 Level 1 has 70 deterministic tests covering the five required toy cases,
