@@ -26,7 +26,10 @@ jobs:
       - name: Tests
         run: uv run pytest
       - name: CLI smoke test
-        run: uv run elspr version
+        run: |
+          uv run elspr version
+          uv run elspr toy-pipeline --output-dir /tmp/elspr-toy
+          uv run elspr report --run-dir /tmp/elspr-toy
       - name: Reject likely tracked secrets
         run: |
           if git grep -nEI '(sk-[A-Za-z0-9_-]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16})'; then

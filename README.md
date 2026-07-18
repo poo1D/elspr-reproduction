@@ -15,6 +15,41 @@ The implementation follows one critical edge convention: an edge points from
 the worse response to the better response, so node in-degree is its win count.
 Ties are represented by two directed edges.
 
+## Level 1 method
+
+For every unordered response pair, the pipeline requires judgments in both
+presentation orders. Complementary `win/lose` outcomes produce one preference
+edge; any other valid combination produces a bidirectional tie. Missing,
+invalid, or duplicate orders reject the question rather than silently filling
+the graph.
+
+Tarjan SCC analysis marks a component non-transitive only when it has more than
+two nodes and is not an all-pairs tie. The dataset metric is vertex-weighted:
+
+```text
+rho_non_trans =
+  nodes in non-transitive SCCs across questions
+  / all nodes across questions
+```
+
+The directed two-dimensional structural entropy implementation follows
+Equation 4 of the paper. SCC volume is the sum of node in-degrees. The external
+term excludes only edges between two singleton SCCs. Per-question entropy is
+normalized as `tau = H2 / log2(|V|)`, and `tau_avg` is the unweighted question
+mean. Empty graphs, single-node graphs, and zero-volume graphs return zero;
+values are not clipped, and an out-of-range result emits a warning.
+
+Reconstruction freezes each node's original global in-degree, replaces
+internal SCC edges with degree-ranked edges, and preserves SCC-external edges.
+Equal scores remain bidirectional ties. The raw reconstructed `DiGraph` can
+therefore contain two-cycles; the graph obtained by contracting tie
+equivalence classes is required to be a DAG.
+
+Every raw and reconstructed graph can also be rendered as a deterministic SVG.
+Blue single-headed arrows follow the worse-to-better convention; orange
+double-headed arrows represent ties. Rendering is dependency-free and uses a
+stable circular node layout so identical graphs produce identical files.
+
 ## Development
 
 Requirements: `uv` and Python 3.11 or newer.
@@ -26,15 +61,54 @@ uv run ruff check .
 uv run ruff format --check .
 ```
 
+If editable imports fail on macOS because `.pth` files have the `UF_HIDDEN`
+flag, use the audited workaround documented in `REPRODUCIBILITY.md`.
+
 The complete target behavior is specified in [`GOAL.md`](GOAL.md), current
 status in [`PROGRESS.md`](PROGRESS.md), and paper ambiguities in
 [`REPRODUCIBILITY.md`](REPRODUCIBILITY.md).
+The pinned audit of the later AAAI/arXiv release and author repository is in
+[`UPSTREAM_AUDIT.md`](UPSTREAM_AUDIT.md).
+The pinned minimal empirical run and resource gates are in
+[`LEVEL_2_READINESS.md`](LEVEL_2_READINESS.md).
 
 ## CLI
 
-The `elspr` command is installed by the package. Stage 8 will expose the full
-toy pipeline and the data, graph, filtering, training, evaluation, and report
-commands defined by the project specification.
+Run all five deterministic cases and generate a Markdown report:
+
+```bash
+uv run elspr toy-pipeline --output-dir artifacts/toy
+uv run elspr report --run-dir artifacts/toy
+```
+
+Run the Level 1 stages on validated judgment JSONL:
+
+```bash
+uv run elspr build-graphs \
+  --judgments artifacts/judgments.jsonl \
+  --output-dir artifacts/graphs
+uv run elspr analyze \
+  --graphs artifacts/graphs \
+  --output artifacts/analysis.json
+uv run elspr filter \
+  --graphs artifacts/graphs \
+  --judgments artifacts/judgments.jsonl \
+  --output-dir artifacts/filtered
+```
+
+`build-graphs` rejects incomplete dual-order pairs. `filter` reconstructs every
+graph before writing reconstructed graph JSON/SVG files, `cleaned.jsonl`,
+`discarded.jsonl`, and auditable decisions. `analyze` includes the actual SCC
+partitions as well as aggregate metrics. Judge API, training, and empirical
+evaluation commands belong to Level 2 and are not represented as completed
+functionality in Level 1.
+
+## Verified Level 1 result
+
+Level 1 has 70 deterministic tests covering the five required toy cases,
+graph visualization, and
+the CLI pipeline. The detailed results and reproducibility boundaries are in
+[`reports/LEVEL_1_REPORT.md`](reports/LEVEL_1_REPORT.md).
 
 ## License
 
