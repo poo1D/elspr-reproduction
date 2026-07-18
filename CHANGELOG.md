@@ -27,4 +27,6 @@ All notable project changes are documented here.
   upstream responses.
 - Deterministic rendering of all 1,000 ordered judge requests with stable
   pair/request IDs and a zero-paid-call token-estimate report.
-- An 82-test suite covering Level 1 and the current Level 2 preparation path.
+- A budget-capped, cached, rate-limited, retrying, resumable DashScope executor
+  that retains every raw attempt and never stores its API key.
+- An 87-test suite covering Level 1 and the current Level 2 preparation path.

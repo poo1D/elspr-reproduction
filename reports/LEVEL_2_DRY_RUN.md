@@ -46,7 +46,7 @@ Verified request invariants:
 The rendered request JSONL is 7.1 MiB and remains under the ignored
 `artifacts/raw/` tree. Its stable SHA-256 is:
 
-`308dece526f571fe0f53273acc9fb3558787a2ca9da44a56235ee6e5bbbdca47`
+`747e50232103aa89754ee1582d354d9180756db3d559bb988c44f65efab089bf`
 
 ## Token estimate
 
@@ -63,8 +63,38 @@ utf8_bytes_div4_ceil_v1 = ceil(UTF-8 byte length / 4)
 ```
 
 It is not a Qwen tokenizer result and must not be used as a final billing
-quote. Provider-side token counting and current official pricing must be
-checked before requesting budget approval.
+quote.
+
+The author repository calls the stable API identifier `qwen-max`, despite the
+paper describing the evaluator as Qwen2.5-Max. The current China (Beijing)
+Model Studio list price checked on 2026-07-18 is CNY 2.4 per million input
+tokens and CNY 9.6 per million output tokens. On the approximate input count
+and the deliberately conservative 1,024-token output cap, the estimates are:
+
+- input: CNY 2.485656;
+- maximum output: CNY 9.830400;
+- upper estimate: CNY 12.316056.
+
+Actual billing would use provider-reported token usage. Pricing can change and
+must be checked again at authorization time.
+
+## Provider executor safety
+
+The DashScope executor is implemented but has not been run against the
+provider. It requires all of the following before making a request:
+
+- `provider: dashscope`;
+- `--resume`;
+- `--execute-paid`;
+- a positive `--approved-budget-cny`;
+- a positive `--max-new-requests`;
+- the configured API-key environment variable.
+
+It enforces the approved upper budget before network access, sends requests at
+a uniform configured rate, retries transient 429/5xx and network failures with
+exponential backoff, preserves every raw attempt in a request-specific cache,
+and resumes only from validated result records. Permanent errors and invalid
+model outputs are recorded without silently manufacturing judgments.
 
 ## Validation
 
@@ -72,7 +102,9 @@ checked before requesting budget approval.
   `1a920bd18992bef4317ec4b454ab15ab5f168bd9`
 - Judge dry-run commit:
   `c3319b7eb0f54715898097ef79fc9517291b6b6c`
-- Tests: 82 passed
+- Provider executor commit:
+  `49cac22`
+- Tests: 87 passed
 - Ruff lint and format: passed
 - Real selective download: passed
 - Real 1,000-request dry run: passed twice with the same request artifact hash
@@ -82,9 +114,8 @@ checked before requesting budget approval.
 
 Level 2 is not complete. It still requires:
 
-1. a provider executor with cache, retries, rate limiting, idempotency, raw
-   output retention, and resume;
-2. explicit API credential and budget authorization before execution;
+1. explicit API credential and budget authorization before execution;
+2. a small paid canary before scaling to the full request set;
 3. raw, cleaned, and size-matched random training sets;
 4. three reproducible LoRA training variants;
 5. unseen evaluation with `rho_non_trans` and `tau_avg`;

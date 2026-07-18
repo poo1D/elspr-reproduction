@@ -116,6 +116,12 @@ execution. The token count is an explicitly approximate UTF-8 byte heuristic,
 not a provider billing quote. See
 [`reports/LEVEL_2_DRY_RUN.md`](reports/LEVEL_2_DRY_RUN.md).
 
+Provider execution is implemented but intentionally gated. It additionally
+requires `provider: dashscope`, `--resume`, `--execute-paid`, an approved CNY
+budget, a maximum number of new requests, and `DASHSCOPE_API_KEY` in the
+environment. Do not switch the provider until a canary budget is explicitly
+authorized.
+
 ## Verified Level 1 result
 
 Level 1 has 70 deterministic tests covering the five required toy cases,

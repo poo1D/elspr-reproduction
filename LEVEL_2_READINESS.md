@@ -81,12 +81,19 @@ Completed:
 3. a hash-verifying selective downloader and frozen manifest were implemented;
 4. all 1,000 requests were rendered in a zero-cost dry run.
 
+Completed after the dry run:
+
+1. a resumable, cached, rate-limited provider executor was implemented;
+2. current official `qwen-max` pricing was recorded with a check date;
+3. paid execution was protected by independent mode, flag, budget, request
+   limit, and environment-credential gates.
+
 Next:
 
-1. add the resumable, cached, rate-limited provider executor;
-2. verify provider-side token counts and current official pricing;
-3. request explicit authorization for the credential and budget;
-4. run judgments, then reuse the validated Level 1 graph/filter pipeline.
+1. request explicit authorization for the credential and a small canary budget;
+2. verify actual provider token counts and output parsing on the canary;
+3. only after canary review, run further judgments and reuse the validated
+   Level 1 graph/filter pipeline.
 
 No paid API call, full-corpus download, GPU training, merge, or tag is
 authorized by this readiness record.

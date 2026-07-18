@@ -150,8 +150,8 @@
 | Stage | Status | Branch | Commit | Tests | Main result | Remaining gate |
 |---|---|---|---|---|---|---|
 | 1. Public response preparation | done | `repro/level-2` | `1a920bd18992bef4317ec4b454ab15ab5f168bd9` | 75 passed | Five pinned models, 50 deterministic questions, and 250 validated responses | None |
-| 2. Judge request dry run | done | `repro/level-2` | `c3319b7eb0f54715898097ef79fc9517291b6b6c` | 82 passed | 1,000 stable dual-order requests and explicit approximate token estimate | Provider execution is not yet implemented |
-| 3. Provider judgment execution | in progress | `repro/level-2` | - | - | No paid calls executed | Needs executor, current pricing, credential, and explicit budget approval |
+| 2. Judge request dry run | done | `repro/level-2` | `c3319b7eb0f54715898097ef79fc9517291b6b6c` | 82 passed | 1,000 stable dual-order requests and explicit approximate token estimate | None |
+| 3. Provider execution tooling | done; execution gated | `repro/level-2` | `49cac22` | 87 passed | Budget-capped, cached, rate-limited, retrying, resumable DashScope executor | Needs credential and explicit paid budget approval |
 | 4. Training variants | pending | `repro/level-2` | - | - | - | Needs judgments and suitable GPU environment |
 | 5. Unseen evaluation and report | pending | `repro/level-2` | - | - | - | Needs trained raw, cleaned, and random variants |
 
@@ -168,7 +168,17 @@
 - Completed: 2026-07-18
 - Result: 1,000 requests, 500 pair IDs, two swapped orders per pair, and 20 requests per question
 - Estimated input: 1,035,690 tokens using the explicitly approximate `utf8_bytes_div4_ceil_v1` heuristic
-- Request artifact SHA-256: `308dece526f571fe0f53273acc9fb3558787a2ca9da44a56235ee6e5bbbdca47`
+- Request artifact SHA-256: `747e50232103aa89754ee1582d354d9180756db3d559bb988c44f65efab089bf`
 - Safety: `provider: dry_run` executed zero paid requests and refuses provider execution
 - Evidence: `reports/LEVEL_2_DRY_RUN.md`
-- Next: implement cache, idempotency, retry, rate limiting, raw-output retention, and resume before requesting API authorization
+- Current price snapshot: CNY 2.4/million input tokens and CNY 9.6/million output tokens for `qwen-max`; upper dry-run estimate CNY 12.316056
+- Next: obtain explicit credential and budget authorization, then run a capped canary before any full execution
+
+### Level 2 Stage 3 - Provider execution tooling
+
+- Completed: 2026-07-18
+- Result: a guarded OpenAI-compatible DashScope executor with stable request IDs, permanent per-attempt raw caches, validated result caches, resumable execution, uniform rate limiting, transient retry/backoff, provider token usage, and actual-cost reporting
+- Safety gates: provider mode, `--resume`, `--execute-paid`, approved CNY budget, maximum new-request count, and environment-only API key are all mandatory
+- Validation: retryable 429, invalid successful output, permanent 400, budget rejection, missing authorization/key, raw retention, secret non-persistence, and cache-only resume are tested
+- Paid requests executed: 0
+- Next: request a credential and a small canary budget; do not execute all 1,000 requests immediately
