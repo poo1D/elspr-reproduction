@@ -29,16 +29,23 @@ class JudgeConfig(StrictModel):
 
     provider: Literal["dry_run", "dashscope"]
     model: str = Field(min_length=1)
+    api_url: str = Field(pattern=r"^https://")
+    api_key_env: str = Field(pattern=r"^[A-Z][A-Z0-9_]+$")
     responses: Path
     prompt_template: Path
     system_prompt_template: Path
     temperature: float = Field(ge=0)
+    seed: int = Field(ge=0, le=2**31 - 1)
     max_output_tokens: int = Field(gt=0)
     max_retries: int = Field(ge=0)
     requests_per_minute: int = Field(gt=0)
     cache_dir: Path
     output_dir: Path
     expected_responses_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    input_price_cny_per_million: float = Field(ge=0)
+    output_price_cny_per_million: float = Field(ge=0)
+    pricing_checked_at: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
+    pricing_url: str = Field(pattern=r"^https://")
 
 
 class JudgeRequest(StrictModel):
@@ -175,6 +182,7 @@ def _render_request(
         "right_model": right.model_id,
         "judge_model": config.model,
         "temperature": config.temperature,
+        "seed": config.seed,
         "max_output_tokens": config.max_output_tokens,
         "system_prompt_sha256": _sha256_bytes(system_prompt.encode("utf-8")),
         "user_prompt_sha256": _sha256_bytes(user_prompt.encode("utf-8")),
@@ -288,6 +296,23 @@ def _dry_run_report(
         "maximum_output_tokens": {
             "per_request": config.max_output_tokens,
             "total": len(requests) * config.max_output_tokens,
+        },
+        "estimated_cost_cny": {
+            "input": sum(input_tokens) * config.input_price_cny_per_million / 1_000_000,
+            "maximum_output": len(requests)
+            * config.max_output_tokens
+            * config.output_price_cny_per_million
+            / 1_000_000,
+            "upper_bound": (
+                sum(input_tokens) * config.input_price_cny_per_million
+                + len(requests)
+                * config.max_output_tokens
+                * config.output_price_cny_per_million
+            )
+            / 1_000_000,
+            "currency": "CNY",
+            "pricing_checked_at": config.pricing_checked_at,
+            "pricing_url": config.pricing_url,
         },
         "requests_sha256": _sha256_file(config.output_dir / "judge_requests.jsonl"),
         "prompt_sha256": _sha256_file(config.prompt_template),

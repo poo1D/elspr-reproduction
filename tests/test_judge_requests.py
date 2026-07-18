@@ -49,10 +49,13 @@ def _config(
     return JudgeConfig(
         provider=provider,
         model="judge-model",
+        api_url="https://example.test/compatible-mode/v1/chat/completions",
+        api_key_env="TEST_API_KEY",
         responses=responses_path,
         prompt_template=prompt,
         system_prompt_template=system,
         temperature=0,
+        seed=1234,
         max_output_tokens=100,
         max_retries=3,
         requests_per_minute=30,
@@ -61,6 +64,10 @@ def _config(
         expected_responses_sha256=hashlib.sha256(
             responses_path.read_bytes()
         ).hexdigest(),
+        input_price_cny_per_million=2.4,
+        output_price_cny_per_million=9.6,
+        pricing_checked_at="2026-07-18",
+        pricing_url="https://example.test/pricing",
     )
 
 
@@ -128,6 +135,7 @@ def test_dry_run_writes_requests_and_zero_paid_call_report(tmp_path: Path) -> No
     assert report["generated_at"] == "2026-07-18T00:00:00+00:00"
     assert report["token_estimator"] == "utf8_bytes_div4_ceil_v1"
     assert report["maximum_output_tokens"]["total"] == 1200
+    assert report["estimated_cost_cny"]["upper_bound"] > 0
     assert (
         report["requests_sha256"]
         == hashlib.sha256(result.requests_path.read_bytes()).hexdigest()
@@ -177,16 +185,23 @@ def test_judge_cli_reports_dry_run_counts(tmp_path: Path) -> None:
             [
                 "provider: dry_run",
                 "model: judge-model",
+                "api_url: https://example.test/compatible-mode/v1/chat/completions",
+                "api_key_env: TEST_API_KEY",
                 f"responses: {config.responses}",
                 f"prompt_template: {config.prompt_template}",
                 f"system_prompt_template: {config.system_prompt_template}",
                 "temperature: 0",
+                "seed: 1234",
                 "max_output_tokens: 100",
                 "max_retries: 3",
                 "requests_per_minute: 30",
                 f"cache_dir: {config.cache_dir}",
                 f"output_dir: {config.output_dir}",
                 f"expected_responses_sha256: {config.expected_responses_sha256}",
+                "input_price_cny_per_million: 2.4",
+                "output_price_cny_per_million: 9.6",
+                "pricing_checked_at: '2026-07-18'",
+                "pricing_url: https://example.test/pricing",
                 "",
             ]
         ),

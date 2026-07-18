@@ -25,6 +25,7 @@ from elspr.graph import (
 from elspr.io import read_jsonl, write_jsonl
 from elspr.judging import (
     aggregate_pair_judgments,
+    execute_judgments,
     judge_dry_run,
     load_judge_config,
 )
@@ -68,16 +69,38 @@ def prepare_data_command(
 def judge(
     config: Annotated[Path, typer.Option(exists=True, dir_okay=False)],
     resume: Annotated[bool, typer.Option()] = False,
+    execute_paid: Annotated[bool, typer.Option()] = False,
+    approved_budget_cny: Annotated[float, typer.Option(min=0)] = 0.0,
+    max_new_requests: Annotated[int, typer.Option(min=0)] = 0,
 ) -> None:
-    """Render and estimate ordered judge requests without paid calls."""
+    """Render requests or execute an explicitly authorized paid batch."""
 
-    del resume  # Reserved for the provider execution stage.
-    result = judge_dry_run(load_judge_config(config))
+    judge_config = load_judge_config(config)
+    if judge_config.provider == "dry_run":
+        if execute_paid:
+            raise typer.BadParameter(
+                "provider is dry_run; paid execution was not attempted"
+            )
+        result = judge_dry_run(judge_config)
+        typer.echo(
+            f"dry-run questions={result.question_count} models={result.model_count} "
+            f"requests={result.request_count} "
+            f"estimated_input_tokens={result.estimated_input_tokens} "
+            f"maximum_output_tokens={result.maximum_output_tokens}"
+        )
+        return
+    if not resume:
+        raise typer.BadParameter("provider execution requires --resume")
+    execution = execute_judgments(
+        judge_config,
+        execute_paid=execute_paid,
+        approved_budget_cny=approved_budget_cny,
+        max_new_requests=max_new_requests,
+    )
     typer.echo(
-        f"dry-run questions={result.question_count} models={result.model_count} "
-        f"requests={result.request_count} "
-        f"estimated_input_tokens={result.estimated_input_tokens} "
-        f"maximum_output_tokens={result.maximum_output_tokens}"
+        f"execution cached={execution.cached_count} new={execution.new_count} "
+        f"failed={execution.failed_count} pending={execution.pending_count} "
+        f"actual_cost_cny={execution.actual_cost_cny:.6f}"
     )
 
 
