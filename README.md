@@ -122,6 +122,26 @@ budget, a maximum number of new requests, and `DASHSCOPE_API_KEY` in the
 environment. Do not switch the provider until a canary budget is explicitly
 authorized.
 
+After judgments and filtering exist, prepare and plan the three training
+variants:
+
+```bash
+uv run elspr prepare-training --config configs/training_data.yaml
+uv run elspr train --variant raw --config configs/train_qwen.yaml
+uv run elspr train --variant cleaned --config configs/train_qwen.yaml
+uv run elspr train --variant random --config configs/train_qwen.yaml
+```
+
+`train` is plan-only unless `--execute-training` is supplied and all CUDA,
+disk, data-hash, and batch-size gates pass. Evaluate returned variants with:
+
+```bash
+uv run elspr evaluate --config configs/eval.yaml
+```
+
+Current machine and authorization blockers are recorded in
+[`reports/LEVEL_2_RESOURCE_AUDIT.md`](reports/LEVEL_2_RESOURCE_AUDIT.md).
+
 ## Verified Level 1 result
 
 Level 1 has 70 deterministic tests covering the five required toy cases,

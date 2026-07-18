@@ -29,4 +29,10 @@ All notable project changes are documented here.
   pair/request IDs and a zero-paid-call token-estimate report.
 - A budget-capped, cached, rate-limited, retrying, resumable DashScope executor
   that retains every raw attempt and never stores its API key.
-- An 87-test suite covering Level 1 and the current Level 2 preparation path.
+- A frozen 40-question training and 10-question unseen split plus hash-verified
+  raw, cleaned, and size-matched random training-data generation.
+- A pinned, plan-first Transformers + PEFT LoRA runner with CUDA, disk,
+  global-batch, provenance, and resume gates.
+- Strict raw/cleaned/random unseen evaluation with per-question graph/SCC/entropy
+  artifacts and conclusion-direction reporting.
+- A 101-test suite covering Level 1 and the available Level 2 path.

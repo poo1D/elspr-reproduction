@@ -104,7 +104,13 @@ model outputs are recorded without silently manufacturing judgments.
   `c3319b7eb0f54715898097ef79fc9517291b6b6c`
 - Provider executor commit:
   `49cac22`
-- Tests: 87 passed
+- Split-safe training-data tooling commit:
+  `eedd83c`
+- Guarded LoRA runner commit:
+  `790943c`
+- Unseen evaluation tooling commit:
+  `3ee4c86`
+- Tests: 101 passed
 - Ruff lint and format: passed
 - Real selective download: passed
 - Real 1,000-request dry run: passed twice with the same request artifact hash
@@ -116,7 +122,11 @@ Level 2 is not complete. It still requires:
 
 1. explicit API credential and budget authorization before execution;
 2. a small paid canary before scaling to the full request set;
-3. raw, cleaned, and size-matched random training sets;
-4. three reproducible LoRA training variants;
-5. unseen evaluation with `rho_non_trans` and `tau_avg`;
-6. a conclusion-direction report with API cost, GPU time, and failure records.
+3. materialized raw, cleaned, and size-matched random training sets;
+4. three executed LoRA training variants;
+5. executed unseen evaluation with `rho_non_trans` and `tau_avg`;
+6. a conclusion-direction report with actual API cost, GPU time, and failure
+   records.
+
+The code paths for items 3-6 are implemented and tested, but their real inputs
+or required compute do not yet exist. See `LEVEL_2_RESOURCE_AUDIT.md`.

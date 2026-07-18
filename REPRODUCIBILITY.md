@@ -47,6 +47,18 @@ discrepancies are recorded in [`UPSTREAM_AUDIT.md`](UPSTREAM_AUDIT.md).
 6. Level 3 remains partially blocked by the missing run artifacts and training
    provenance listed in `UPSTREAM_AUDIT.md`; Level 2 can now use the pinned
    public response data and exact prompt instead of placeholders.
+7. The paper reports LoRA rank, epochs, learning rate, and batch size but not
+   LoRA alpha, dropout, target modules, exact model revision, or whether batch
+   size 16 is per-device or global. Level 2 pins revision
+   `a09a35458c702b33eeacc393d103063234e8bc28`, assumes global batch 16, and
+   records alpha 16, dropout 0.05, and attention projection targets as explicit
+   assumptions.
+8. The current 50-question subset is frozen before judgment into 40 training
+   questions and 10 unseen evaluation questions by question-ID order. No
+   unseen judgment may enter raw, cleaned, or random training output.
+9. Local execution requires CUDA because that is the only implemented and
+   validated training target. The current Apple Silicon host is used for
+   planning and tests only; it is not treated as equivalent training evidence.
 
 ## Local environment note
 
@@ -64,3 +76,6 @@ PYTHONPATH=src /tmp/elspr-reproduction-venv/bin/pytest
 This installs the package directory outside the affected Desktop tree and uses
 the current source checkout explicitly. Ubuntu GitHub Actions does not use this
 macOS filesystem behavior.
+
+The empirical resource audit is in
+[`reports/LEVEL_2_RESOURCE_AUDIT.md`](reports/LEVEL_2_RESOURCE_AUDIT.md).
